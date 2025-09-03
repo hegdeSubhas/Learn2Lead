@@ -13,7 +13,7 @@ export type RoadmapState = {
     roadmap: string;
     resources: string;
   };
-  error?: string;
+  error?: any;
   success: boolean;
 };
 
@@ -34,8 +34,17 @@ export async function generateRoadmapAction(
   }
   
   try {
+    const jobRoles = validatedFields.data.jobRole.split(',').map(role => role.trim()).filter(role => role.length > 0);
+    
+    if (jobRoles.length === 0) {
+        return {
+            success: false,
+            error: { jobRole: ["Please enter at least one valid job role."] }
+        }
+    }
+
     const result = await generateJobRoadmap({
-      jobRole: validatedFields.data.jobRole,
+      jobRoles: jobRoles,
       interests: validatedFields.data.interests,
     });
     return { success: true, result };

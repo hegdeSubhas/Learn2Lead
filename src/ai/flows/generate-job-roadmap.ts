@@ -13,13 +13,13 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateJobRoadmapInputSchema = z.object({
-  jobRole: z.string().describe('The specific job role for which to generate a roadmap.'),
+  jobRoles: z.array(z.string()).describe('The specific job roles for which to generate a roadmap.'),
   interests: z.string().describe('The interests of the student to tailor the roadmap.'),
 });
 export type GenerateJobRoadmapInput = z.infer<typeof GenerateJobRoadmapInputSchema>;
 
 const GenerateJobRoadmapOutputSchema = z.object({
-  roadmap: z.string().describe('The generated roadmap for the specified job role, tailored to the student\s interests.'),
+  roadmap: z.string().describe('The generated roadmap for the specified job roles, tailored to the student\s interests.'),
   resources: z.string().describe('Suggested resources such as books, websites, or courses.'),
 });
 export type GenerateJobRoadmapOutput = z.infer<typeof GenerateJobRoadmapOutputSchema>;
@@ -32,9 +32,13 @@ const prompt = ai.definePrompt({
   name: 'generateJobRoadmapPrompt',
   input: {schema: GenerateJobRoadmapInputSchema},
   output: {schema: GenerateJobRoadmapOutputSchema},
-  prompt: `You are an AI career counselor. Generate a roadmap for the job role: {{{jobRole}}}, tailored to the student's interests: {{{interests}}}. Also suggest relevant resources.
+  prompt: `You are an AI career counselor. Generate a combined roadmap for the following job roles: {{#each jobRoles}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}.
 
-Roadmap: A step-by-step guide to achieving the job role.
+The roadmap should be tailored to the student's interests: {{{interests}}}.
+
+Also suggest relevant resources.
+
+Roadmap: A step-by-step guide to achieving the job roles.
 Resources: List of helpful books, websites, courses, and other learning materials.
 `,
 });

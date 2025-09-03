@@ -29,8 +29,9 @@ export function RoadmapForm() {
     <div className="space-y-6">
       <form action={formAction} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="jobRole">Job Role</Label>
-          <Input id="jobRole" name="jobRole" placeholder="e.g., Software Engineer" required />
+          <Label htmlFor="jobRole">Job Role(s)</Label>
+          <Input id="jobRole" name="jobRole" placeholder="e.g., Software Engineer, Data Scientist" required />
+          <p className="text-xs text-muted-foreground">Enter one or more job roles, separated by commas.</p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="interests">Your Interests</Label>
