@@ -63,7 +63,7 @@ export async function getInternships(): Promise<Internship[]> {
     return MOCK_INTERNSHIPS;
   }
   
-  const url = `https://${apiHost}/search?query=internship%20in%20USA&num_pages=1`;
+  const url = `https://${apiHost}/?query=internship%20in%20USA&num_pages=1`;
   const options = {
     method: 'GET',
     headers: {
