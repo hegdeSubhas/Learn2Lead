@@ -46,6 +46,24 @@ const MOCK_INTERNSHIPS: Internship[] = [
     url: 'https://www.google.com/search?q=UX%2FUI+Design+Intern',
     type: 'Internship',
   },
+  {
+    id: '5',
+    title: 'Cybersecurity Intern',
+    company_name: 'SecureNet India',
+    location: 'Hyderabad, India',
+    description: 'Learn about network security, threat analysis, and incident response in a real-world environment. Assist in monitoring and protecting our systems.',
+    url: 'https://www.google.com/search?q=Cybersecurity+Intern',
+    type: 'Full-time',
+  },
+  {
+    id: '6',
+    title: 'AI/ML Intern',
+    company_name: 'AI Innovators',
+    location: 'Remote',
+    description: 'Work on cutting-edge AI projects, including natural language processing and computer vision. Develop and train machine learning models.',
+    url: 'https://www.google.com/search?q=AI%2FML+Intern',
+    type: 'Internship',
+  },
 ];
 
 
@@ -83,7 +101,7 @@ export async function getInternships(category?: string): Promise<Internship[]> {
     }
 
     const internships: Internship[] = result.data.map((job: any) => {
-      const applyUrl = job.job_apply_link && job.job_apply_link.startsWith('http') 
+      const applyUrl = job.job_apply_link && (job.job_apply_link.startsWith('http')) 
         ? job.job_apply_link 
         : `https://www.google.com/search?q=${encodeURIComponent(job.job_title + " " + job.employer_name)}`;
 

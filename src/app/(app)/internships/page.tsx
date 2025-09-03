@@ -3,12 +3,11 @@ import { InternshipList } from './_components/internship-list';
 import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { InternshipTabs } from './_components/internship-tabs';
 
 function InternshipListSkeleton() {
     return (
         <div className="grid gap-6 md:grid-cols-2">
-            {[...Array(4)].map((_, index) => (
+            {[...Array(6)].map((_, index) => (
                 <Card key={index}>
                     <CardHeader>
                         <Skeleton className="h-6 w-3/4" />
@@ -26,9 +25,7 @@ function InternshipListSkeleton() {
     )
 }
 
-export default function InternshipsPage({ searchParams }: { searchParams: { category?: string } }) {
-    const category = searchParams.category || 'all';
-
+export default function InternshipsPage() {
     return (
         <div className="space-y-8">
             <div className="text-center">
@@ -37,22 +34,19 @@ export default function InternshipsPage({ searchParams }: { searchParams: { cate
                     Live internship opportunities powered by RapidAPI.
                 </p>
             </div>
-
-            <InternshipTabs currentCategory={category}>
-                 <Card>
-                    <CardHeader>
-                        <CardTitle>Available Internships</CardTitle>
-                        <CardDescription>
-                            {category === 'all' ? 'Showing all internships.' : `Showing internships for ${category}.`}
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <Suspense fallback={<InternshipListSkeleton />} key={category}>
-                           <InternshipList category={category === 'all' ? undefined : category} />
-                        </Suspense>
-                    </CardContent>
-                </Card>
-            </InternshipTabs>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Available Internships</CardTitle>
+                    <CardDescription>
+                        Showing all available internships.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Suspense fallback={<InternshipListSkeleton />}>
+                        <InternshipList />
+                    </Suspense>
+                </CardContent>
+            </Card>
         </div>
     );
 }
