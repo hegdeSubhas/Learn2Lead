@@ -32,12 +32,12 @@ async function InternshipCard({ internship }: { internship: Internship }) {
 }
 
 
-export async function InternshipList() {
+export async function InternshipList({ category }: { category?: string }) {
     try {
-        const internships = await getInternships();
+        const internships = await getInternships(category);
 
         if (!internships || internships.length === 0) {
-            return <p>No internships found at the moment. Please check back later!</p>
+            return <p>No internships found for this category at the moment. Please check back later!</p>
         }
 
         return (
