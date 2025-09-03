@@ -56,10 +56,10 @@ const MOCK_INTERNSHIPS: Internship[] = [
 
 export async function getInternships(): Promise<Internship[]> {
   const apiKey = process.env.RAPID_INTERNSHIP_API_KEY;
-  const apiHost = process.env.RAPID_INTERNSHIP_API_HOST || 'jsearch.p.rapidapi.com';
+  const apiHost = process.env.RAPID_INTERNSHIP_API_HOST;
 
-  if (!apiKey) {
-    console.log("RAPID_INTERNSHIP_API_KEY is not set. Using mock data.");
+  if (!apiKey || !apiHost) {
+    console.log("RAPID_INTERNSHIP_API_KEY or RAPID_INTERNSHIP_API_HOST is not set. Using mock data.");
     return MOCK_INTERNSHIPS;
   }
   
