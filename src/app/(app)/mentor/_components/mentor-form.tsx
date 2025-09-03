@@ -1,6 +1,7 @@
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { getGuidanceAction } from "../actions";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,7 +22,7 @@ function SubmitButton() {
 
 export function MentorForm() {
   const initialState = { success: false };
-  const [state, formAction] = useFormState(getGuidanceAction, initialState);
+  const [state, formAction] = useActionState(getGuidanceAction, initialState);
 
   return (
     <div className="space-y-6">
