@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Terminal } from "lucide-react";
 
-async function InternshipCard({ internship }: { internship: Internship }) {
+function InternshipCard({ internship }: { internship: Internship }) {
   return (
     <Card className="flex flex-col">
       <CardHeader>

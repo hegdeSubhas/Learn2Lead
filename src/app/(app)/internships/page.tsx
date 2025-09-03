@@ -4,7 +4,7 @@ import { InternshipList } from './_components/internship-list';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Suspense, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
 const categories = [
     { value: 'all', label: 'All' },
@@ -57,21 +57,22 @@ export default function InternshipsPage() {
                         ))}
                     </TabsList>
                 </div>
+                <TabsContent value={category}>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Available Internships</CardTitle>
+                            <CardDescription>
+                                {category === 'all' ? 'Showing all internships.' : `Showing internships for ${category}.`}
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Suspense fallback={<InternshipListSkeleton />}>
+                                <InternshipList category={category === 'all' ? undefined : category} />
+                            </Suspense>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
             </Tabs>
-
-            <Card>
-                <CardHeader>
-                    <CardTitle>Available Internships</CardTitle>
-                    <CardDescription>
-                        {category === 'all' ? 'Showing all internships.' : `Showing internships for ${category}.`}
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Suspense fallback={<InternshipListSkeleton />}>
-                        <InternshipList key={category} category={category === 'all' ? undefined : category} />
-                    </Suspense>
-                </CardContent>
-            </Card>
         </div>
     );
 }
