@@ -56,14 +56,14 @@ const MOCK_INTERNSHIPS: Internship[] = [
 
 export async function getInternships(): Promise<Internship[]> {
   const apiKey = process.env.RAPID_INTERNSHIP_API_KEY;
-  const apiHost = process.env.RAPID_INTERNSHIP_API_HOST || 'job-search-and-internship.p.rapidapi.com';
+  const apiHost = process.env.RAPID_INTERNSHIP_API_HOST || 'jsearch.p.rapidapi.com';
 
   if (!apiKey) {
     console.log("RAPID_INTERNSHIP_API_KEY is not set. Using mock data.");
     return MOCK_INTERNSHIPS;
   }
   
-  const url = `https://${apiHost}/search?query=internship&country=US`;
+  const url = `https://${apiHost}/search?query=internship%20in%20USA&num_pages=1`;
   const options = {
     method: 'GET',
     headers: {
@@ -75,12 +75,12 @@ export async function getInternships(): Promise<Internship[]> {
   try {
     const response = await fetch(url, options);
     if (!response.ok) {
+       const errorText = await response.text();
+       console.error("API Error Response:", errorText);
        throw new Error(`API call failed with status: ${response.status}`)
     }
     const result = await response.json();
 
-    // The Rapid Internship API returns data in a specific format.
-    // We need to transform it to match our `Internship` type.
     if (!result.data || !Array.isArray(result.data)) {
         console.warn("API response did not contain expected 'data' array. Using mock data.");
         return MOCK_INTERNSHIPS;
@@ -99,7 +99,7 @@ export async function getInternships(): Promise<Internship[]> {
 
     return internships;
   } catch (error) {
-    console.error(error);
+    console.error("Caught error in getInternships:", error);
     throw new Error("Failed to fetch internship data. Please check your API key and network connection.");
   }
 }
