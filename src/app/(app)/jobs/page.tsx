@@ -45,7 +45,7 @@ export default function JobsPage() {
   return (
     <div className="space-y-8">
       <div className="text-center">
-        <h1 className="text-4xl font-headline font-bold">Jobs &amp; Internships</h1>
+        <h1 className="text-4xl font-headline font-bold">Jobs</h1>
         <p className="text-muted-foreground mt-2">
           Explore current opportunities and market trends.
         </p>
