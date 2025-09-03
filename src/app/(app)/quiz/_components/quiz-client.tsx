@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
@@ -72,6 +72,17 @@ export function QuizClient() {
     return acc;
   }, 0);
 
+  const question = useMemo(() => {
+    if (questions.length === 0) return null;
+    return questions[currentQuestion];
+  }, [questions, currentQuestion]);
+
+  const options = useMemo(() => {
+    if (!question) return [];
+    return [...question.incorrect_answers, question.correct_answer].sort(() => Math.random() - 0.5);
+  }, [question]);
+
+
   if (isLoading) {
     return (
         <div className="flex items-center justify-center h-40">
@@ -91,7 +102,7 @@ export function QuizClient() {
     )
   }
 
-  if (questions.length === 0) {
+  if (questions.length === 0 || !question) {
     return (
         <div className="space-y-4 text-center">
             <p>Select a category to start the quiz!</p>
@@ -147,9 +158,6 @@ export function QuizClient() {
     );
   }
 
-  const question = questions[currentQuestion];
-  const options = [...question.incorrect_answers, question.correct_answer].sort(() => Math.random() - 0.5);
-
   return (
     <div className="space-y-6">
       <p className="text-sm text-muted-foreground">
@@ -161,12 +169,15 @@ export function QuizClient() {
         onValueChange={handleAnswerChange}
       >
         <div className="space-y-2">
-          {options.map((option) => (
-            <div key={option} className="flex items-center space-x-2">
-              <RadioGroupItem value={option} id={option} />
-              <Label htmlFor={option}>{decodeHtml(option)}</Label>
-            </div>
-          ))}
+          {options.map((option, index) => {
+            const optionId = `option-${currentQuestion}-${index}`;
+            return (
+              <div key={optionId} className="flex items-center space-x-2">
+                <RadioGroupItem value={option} id={optionId} />
+                <Label htmlFor={optionId}>{decodeHtml(option)}</Label>
+              </div>
+            );
+          })}
         </div>
       </RadioGroup>
       <Button onClick={handleNext} disabled={!answers[currentQuestion]}>
