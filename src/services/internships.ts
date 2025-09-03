@@ -17,7 +17,7 @@ const MOCK_INTERNSHIPS: Internship[] = [
     company_name: 'Innovatech',
     location: 'Remote',
     description: 'Work on exciting projects and gain hands-on experience with our engineering team. You will be contributing to our core products.',
-    url: '#',
+    url: 'https://www.google.com/search?q=Software+Engineer+Intern+Innovatech',
     type: 'Full-time',
     via: 'Mock API',
   },
@@ -27,7 +27,7 @@ const MOCK_INTERNSHIPS: Internship[] = [
     company_name: 'Future Creations',
     location: 'New York, NY',
     description: 'Help define product roadmaps, work with cross-functional teams and conduct market research for our upcoming product launches.',
-    url: '#',
+    url: 'https://www.google.com/search?q=Product+Management+Intern+Future+Creations',
     type: 'Part-time',
     via: 'Mock API',
   },
@@ -37,7 +37,7 @@ const MOCK_INTERNSHIPS: Internship[] = [
     company_name: 'DataDriven Co.',
     location: 'Remote',
     description: 'Analyze large datasets to extract meaningful insights. Work with our data science team to build dashboards and reports.',
-    url: '#',
+    url: 'https://www.google.com/search?q=Data+Analyst+Intern+DataDriven+Co.',
     type: 'Internship',
     via: 'Mock API',
   },
@@ -47,7 +47,7 @@ const MOCK_INTERNSHIPS: Internship[] = [
     company_name: 'Creative Minds',
     location: 'San Francisco, CA',
     description: 'Join our design team to create intuitive and beautiful user experiences. You will be working on wireframes, mockups, and prototypes.',
-    url: '#',
+    url: 'https://www.google.com/search?q=UX%2FUI+Design+Intern+Creative+Minds',
     type: 'Internship',
     via: 'Mock API',
   },
@@ -86,16 +86,22 @@ export async function getInternships(): Promise<Internship[]> {
         return MOCK_INTERNSHIPS;
     }
 
-    const internships: Internship[] = result.data.map((job: any) => ({
-      id: job.job_id,
-      title: job.job_title,
-      company_name: job.employer_name || 'N/A',
-      location: job.job_city && job.job_state ? `${job.job_city}, ${job.job_state}` : (job.job_country ? `${job.job_country}`: 'Remote'),
-      description: job.job_description,
-      url: job.job_apply_link,
-      type: job.job_employment_type,
-      via: job.job_publisher
-    })).filter(job => job.title && job.company_name);
+    const internships: Internship[] = result.data.map((job: any) => {
+      const applyUrl = job.job_apply_link && job.job_apply_link.startsWith('http') 
+        ? job.job_apply_link 
+        : `https://www.google.com/search?q=${encodeURIComponent(job.job_title + " " + job.employer_name)}`;
+
+      return {
+        id: job.job_id,
+        title: job.job_title,
+        company_name: job.employer_name || 'N/A',
+        location: job.job_city && job.job_state ? `${job.job_city}, ${job.job_state}` : (job.job_country ? `${job.job_country}`: 'Remote'),
+        description: job.job_description,
+        url: applyUrl,
+        type: job.job_employment_type,
+        via: job.job_publisher
+      }
+    }).filter(job => job.title && job.company_name);
 
     return internships;
   } catch (error) {
