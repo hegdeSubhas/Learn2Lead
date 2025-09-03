@@ -5,49 +5,52 @@ import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle, XCircle } from 'lucide-react';
+import { CheckCircle, XCircle, Loader2, Terminal } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { getQuizAction, type QuizQuestion } from '../actions';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
-const quizQuestions = [
-  {
-    question: 'What does HTML stand for?',
-    options: [
-      'Hyper Text Markup Language',
-      'High Tech Modern Language',
-      'Hyperlink and Text Markup Language',
-      'Home Tool Markup Language',
-    ],
-    correctAnswer: 'Hyper Text Markup Language',
-  },
-  {
-    question: 'Which CSS property is used to change the text color of an element?',
-    options: ['text-color', 'font-color', 'color', 'foreground-color'],
-    correctAnswer: 'color',
-  },
-  {
-    question: 'What is the correct way to write a JavaScript array?',
-    options: [
-      'var colors = (1:"red", 2:"green", 3:"blue")',
-      'var colors = ["red", "green", "blue"]',
-      'var colors = "red", "green", "blue"',
-      'var colors = 1 = ("red"), 2 = ("green"), 3 = ("blue")',
-    ],
-    correctAnswer: 'var colors = ["red", "green", "blue"]',
-  },
+const quizCategories = [
+    { value: 'Web Development', label: 'Web Development' },
+    { value: 'Data Science', label: 'Data Science' },
+    { value: 'World History', label: 'World History' },
+    { value: 'Physics', label: 'Physics' },
+    { value: 'Literature', label: 'Literature' },
+    { value: 'Biology', label: 'Biology' },
 ];
 
 type Answers = { [key: number]: string };
 
 export function QuizClient() {
+  const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Answers>({});
   const [showResults, setShowResults] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleStartQuiz = async () => {
+    if (!selectedCategory) return;
+    setIsLoading(true);
+    setError(null);
+    setQuestions([]);
+    const result = await getQuizAction(selectedCategory);
+    if (result.success && result.questions) {
+      setQuestions(result.questions);
+      handleRestart();
+    } else {
+      setError(result.error || "Failed to fetch quiz questions.");
+    }
+    setIsLoading(false);
+  };
 
   const handleAnswerChange = (value: string) => {
     setAnswers((prev) => ({ ...prev, [currentQuestion]: value }));
   };
 
   const handleNext = () => {
-    if (currentQuestion < quizQuestions.length - 1) {
+    if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
       setShowResults(true);
@@ -62,24 +65,66 @@ export function QuizClient() {
 
   const score = Object.keys(answers).reduce((acc, key) => {
     const index = parseInt(key, 10);
-    if (answers[index] === quizQuestions[index].correctAnswer) {
+    if (answers[index] === questions[index].correctAnswer) {
       return acc + 1;
     }
     return acc;
   }, 0);
 
+  if (isLoading) {
+    return (
+        <div className="flex items-center justify-center h-40">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <p className="ml-2">Generating your quiz...</p>
+        </div>
+    )
+  }
+
+  if (error) {
+    return (
+        <Alert variant="destructive">
+            <Terminal className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+        </Alert>
+    )
+  }
+
+  if (questions.length === 0) {
+    return (
+        <div className="space-y-4 text-center">
+            <p>Select a category to start the quiz!</p>
+            <div className="flex w-full max-w-sm items-center space-x-2 mx-auto">
+                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Choose a category..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {quizCategories.map(cat => (
+                            <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+                <Button onClick={handleStartQuiz} disabled={!selectedCategory || isLoading}>
+                    Start Quiz
+                </Button>
+            </div>
+        </div>
+    )
+  }
+
   if (showResults) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="font-headline text-2xl">Quiz Results</CardTitle>
+          <CardTitle className="font-headline text-2xl">Quiz Results for {selectedCategory}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-center text-lg">
-            You scored {score} out of {quizQuestions.length}
+            You scored {score} out of {questions.length}
           </p>
           <div className='space-y-4'>
-            {quizQuestions.map((q, index) => (
+            {questions.map((q, index) => (
                 <div key={index} className="p-4 border rounded-lg">
                     <p className="font-semibold">{q.question}</p>
                     <p className={`flex items-center gap-2 mt-2 ${answers[index] === q.correctAnswer ? 'text-green-600' : 'text-red-600'}`}>
@@ -93,19 +138,20 @@ export function QuizClient() {
             ))}
           </div>
         </CardContent>
-        <CardFooter>
-            <Button onClick={handleRestart} className="w-full">Restart Quiz</Button>
+        <CardFooter className="flex flex-col sm:flex-row gap-2">
+            <Button onClick={handleRestart} className="w-full sm:w-auto">Restart Quiz</Button>
+            <Button onClick={() => setQuestions([])} variant="outline" className="w-full sm:w-auto">Choose New Category</Button>
         </CardFooter>
       </Card>
     );
   }
 
-  const question = quizQuestions[currentQuestion];
+  const question = questions[currentQuestion];
 
   return (
     <div className="space-y-6">
       <p className="text-sm text-muted-foreground">
-        Question {currentQuestion + 1} of {quizQuestions.length}
+        Question {currentQuestion + 1} of {questions.length}
       </p>
       <h3 className="text-lg font-semibold">{question.question}</h3>
       <RadioGroup
@@ -122,7 +168,7 @@ export function QuizClient() {
         </div>
       </RadioGroup>
       <Button onClick={handleNext} disabled={!answers[currentQuestion]}>
-        {currentQuestion < quizQuestions.length - 1 ? 'Next' : 'Finish'}
+        {currentQuestion < questions.length - 1 ? 'Next' : 'Finish'}
       </Button>
     </div>
   );
