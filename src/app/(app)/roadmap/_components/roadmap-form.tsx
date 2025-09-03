@@ -1,6 +1,6 @@
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState, useFormStatus } from "react";
 import { generateRoadmapAction } from "../actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,7 +22,7 @@ function SubmitButton() {
 
 export function RoadmapForm() {
   const initialState = { success: false };
-  const [state, formAction] = useFormState(generateRoadmapAction, initialState);
+  const [state, formAction] = useActionState(generateRoadmapAction, initialState);
 
   return (
     <div className="space-y-6">
