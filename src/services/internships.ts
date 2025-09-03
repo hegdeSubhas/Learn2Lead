@@ -90,12 +90,12 @@ export async function getInternships(): Promise<Internship[]> {
       id: job.job_id,
       title: job.job_title,
       company_name: job.employer_name || 'N/A',
-      location: job.job_city && job.job_state ? `${job.job_city}, ${job.job_state}` : 'Remote',
+      location: job.job_city && job.job_state ? `${job.job_city}, ${job.job_state}` : (job.job_country ? `${job.job_country}`: 'Remote'),
       description: job.job_description,
       url: job.job_apply_link,
       type: job.job_employment_type,
       via: job.job_publisher
-    }));
+    })).filter(job => job.title && job.company_name);
 
     return internships;
   } catch (error) {
