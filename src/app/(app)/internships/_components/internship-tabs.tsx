@@ -1,7 +1,7 @@
 
 "use client"
 
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
 const categories = [
@@ -27,16 +27,14 @@ export function InternshipTabs({ children, currentCategory }: { children: React.
 
     return (
         <Tabs value={currentCategory} onValueChange={handleValueChange} className="w-full">
-            <div className="flex justify-center">
+            <div className="flex justify-center mb-4">
                 <TabsList className="grid w-full max-w-4xl grid-cols-2 md:grid-cols-4 lg:grid-cols-7">
                     {categories.map((cat) => (
                         <TabsTrigger key={cat.value} value={cat.value}>{cat.label}</TabsTrigger>
                     ))}
                 </TabsList>
             </div>
-            <TabsContent value={currentCategory}>
-                {children}
-            </TabsContent>
+            {children}
         </Tabs>
     );
 }
