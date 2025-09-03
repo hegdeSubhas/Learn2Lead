@@ -12,8 +12,8 @@ export default function QuizPage() {
             </div>
             <Card className="max-w-3xl mx-auto">
                 <CardHeader>
-                    <CardTitle>Dynamic Quiz Generator</CardTitle>
-                    <CardDescription>Our AI will generate a quiz for you on the selected topic.</CardDescription>
+                    <CardTitle>Quiz from Open Trivia Database</CardTitle>
+                    <CardDescription>Select a category and we will generate a quiz for you.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <QuizClient />

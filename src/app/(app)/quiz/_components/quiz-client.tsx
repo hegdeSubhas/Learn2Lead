@@ -9,17 +9,18 @@ import { CheckCircle, XCircle, Loader2, Terminal } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getQuizAction, type QuizQuestion } from '../actions';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-
-const quizCategories = [
-    { value: 'Web Development', label: 'Web Development' },
-    { value: 'Data Science', label: 'Data Science' },
-    { value: 'World History', label: 'World History' },
-    { value: 'Physics', label: 'Physics' },
-    { value: 'Literature', label: 'Literature' },
-    { value: 'Biology', label: 'Biology' },
-];
+import { quizCategories } from '@/services/quiz';
 
 type Answers = { [key: number]: string };
+
+function decodeHtml(html: string) {
+    if (typeof window === 'undefined') {
+        return html;
+    }
+    const txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    return txt.value;
+}
 
 export function QuizClient() {
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
@@ -65,7 +66,7 @@ export function QuizClient() {
 
   const score = Object.keys(answers).reduce((acc, key) => {
     const index = parseInt(key, 10);
-    if (answers[index] === questions[index].correctAnswer) {
+    if (answers[index] === questions[index].correct_answer) {
       return acc + 1;
     }
     return acc;
@@ -101,7 +102,7 @@ export function QuizClient() {
                     </SelectTrigger>
                     <SelectContent>
                         {quizCategories.map(cat => (
-                            <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
+                            <SelectItem key={cat.id} value={String(cat.id)}>{cat.name}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
@@ -117,7 +118,7 @@ export function QuizClient() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="font-headline text-2xl">Quiz Results for {selectedCategory}</CardTitle>
+          <CardTitle className="font-headline text-2xl">Quiz Results for {quizCategories.find(c => c.id === Number(selectedCategory))?.name}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-center text-lg">
@@ -126,13 +127,13 @@ export function QuizClient() {
           <div className='space-y-4'>
             {questions.map((q, index) => (
                 <div key={index} className="p-4 border rounded-lg">
-                    <p className="font-semibold">{q.question}</p>
-                    <p className={`flex items-center gap-2 mt-2 ${answers[index] === q.correctAnswer ? 'text-green-600' : 'text-red-600'}`}>
-                        {answers[index] === q.correctAnswer ? <CheckCircle size={16}/> : <XCircle size={16}/>}
-                        Your answer: {answers[index] || "Not answered"}
+                    <p className="font-semibold">{decodeHtml(q.question)}</p>
+                    <p className={`flex items-center gap-2 mt-2 ${answers[index] === q.correct_answer ? 'text-green-600' : 'text-red-600'}`}>
+                        {answers[index] === q.correct_answer ? <CheckCircle size={16}/> : <XCircle size={16}/>}
+                        Your answer: {decodeHtml(answers[index] || "Not answered")}
                     </p>
-                    {answers[index] !== q.correctAnswer && (
-                        <p className="text-green-700 mt-1">Correct answer: {q.correctAnswer}</p>
+                    {answers[index] !== q.correct_answer && (
+                        <p className="text-green-700 mt-1">Correct answer: {decodeHtml(q.correct_answer)}</p>
                     )}
                 </div>
             ))}
@@ -147,22 +148,23 @@ export function QuizClient() {
   }
 
   const question = questions[currentQuestion];
+  const options = [...question.incorrect_answers, question.correct_answer].sort(() => Math.random() - 0.5);
 
   return (
     <div className="space-y-6">
       <p className="text-sm text-muted-foreground">
         Question {currentQuestion + 1} of {questions.length}
       </p>
-      <h3 className="text-lg font-semibold">{question.question}</h3>
+      <h3 className="text-lg font-semibold">{decodeHtml(question.question)}</h3>
       <RadioGroup
         value={answers[currentQuestion] || ''}
         onValueChange={handleAnswerChange}
       >
         <div className="space-y-2">
-          {question.options.map((option) => (
+          {options.map((option) => (
             <div key={option} className="flex items-center space-x-2">
               <RadioGroupItem value={option} id={option} />
-              <Label htmlFor={option}>{option}</Label>
+              <Label htmlFor={option}>{decodeHtml(option)}</Label>
             </div>
           ))}
         </div>

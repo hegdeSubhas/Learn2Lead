@@ -1,15 +1,9 @@
-'use server';
+"use server";
 
-import { generateQuizQuestions } from '@/ai/flows/generate-quiz-questions';
-import { z } from 'zod';
+import { getQuizQuestionsFromApi, type QuizQuestion } from "@/services/quiz";
+import { z } from "zod";
 
-const QuizQuestionSchema = z.object({
-  question: z.string(),
-  options: z.array(z.string()),
-  correctAnswer: z.string(),
-});
-
-export type QuizQuestion = z.infer<typeof QuizQuestionSchema>;
+export type { QuizQuestion };
 
 type QuizState = {
   questions?: QuizQuestion[];
@@ -17,26 +11,25 @@ type QuizState = {
   success: boolean;
 };
 
-export async function getQuizAction(category: string): Promise<QuizState> {
-  const validatedCategory = z.string().min(2).safeParse(category);
+export async function getQuizAction(categoryId: string): Promise<QuizState> {
+  const validatedCategory = z.string().min(1).safeParse(categoryId);
 
   if (!validatedCategory.success) {
     return {
       success: false,
-      error: 'Invalid category provided.',
+      error: "Invalid category provided.",
     };
   }
 
   try {
-    const result = await generateQuizQuestions({
-      category: validatedCategory.data,
-    });
-    return { success: true, questions: result.questions };
+    const questions = await getQuizQuestionsFromApi(Number(validatedCategory.data));
+    return { success: true, questions };
   } catch (error) {
     console.error(error);
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
     return {
       success: false,
-      error: 'Failed to generate quiz. Please try again.',
+      error: `Failed to fetch quiz questions. ${errorMessage}`,
     };
   }
 }
