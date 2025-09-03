@@ -17,7 +17,6 @@ async function InternshipCard({ internship }: { internship: Internship }) {
       <CardContent className="flex-grow">
         <div className="flex flex-wrap gap-2">
           {internship.type && <Badge variant="secondary">{internship.type}</Badge>}
-          {internship.via && <Badge variant="outline">via {internship.via}</Badge>}
         </div>
         <p className="line-clamp-3 text-sm mt-4 text-muted-foreground">{internship.description}</p>
       </CardContent>

@@ -14,40 +14,40 @@ const MOCK_INTERNSHIPS: Internship[] = [
   {
     id: '1',
     title: 'Software Engineer Intern',
-    company_name: 'Innovatech',
+    company_name: 'Tech Solutions India',
     location: 'Remote',
     description: 'Work on exciting projects and gain hands-on experience with our engineering team. You will be contributing to our core products.',
-    url: 'https://www.google.com/search?q=Software+Engineer+Intern+Innovatech',
+    url: 'https://www.google.com/search?q=Software+Engineer+Intern',
     type: 'Full-time',
     via: 'Mock API',
   },
   {
     id: '2',
     title: 'Product Management Intern',
-    company_name: 'Future Creations',
-    location: 'New York, NY',
+    company_name: 'Future Innovations',
+    location: 'Bengaluru, India',
     description: 'Help define product roadmaps, work with cross-functional teams and conduct market research for our upcoming product launches.',
-    url: 'https://www.google.com/search?q=Product+Management+Intern+Future+Creations',
+    url: 'https://www.google.com/search?q=Product+Management+Intern',
     type: 'Part-time',
     via: 'Mock API',
   },
    {
     id: '3',
     title: 'Data Analyst Intern',
-    company_name: 'DataDriven Co.',
+    company_name: 'Data Insights Pvt. Ltd.',
     location: 'Remote',
     description: 'Analyze large datasets to extract meaningful insights. Work with our data science team to build dashboards and reports.',
-    url: 'https://www.google.com/search?q=Data+Analyst+Intern+DataDriven+Co.',
+    url: 'https://www.google.com/search?q=Data+Analyst+Intern',
     type: 'Internship',
     via: 'Mock API',
   },
    {
     id: '4',
     title: 'UX/UI Design Intern',
-    company_name: 'Creative Minds',
-    location: 'San Francisco, CA',
+    company_name: 'Creative Designs',
+    location: 'Mumbai, India',
     description: 'Join our design team to create intuitive and beautiful user experiences. You will be working on wireframes, mockups, and prototypes.',
-    url: 'https://www.google.com/search?q=UX%2FUI+Design+Intern+Creative+Minds',
+    url: 'https://www.google.com/search?q=UX%2FUI+Design+Intern',
     type: 'Internship',
     via: 'Mock API',
   },
@@ -63,7 +63,7 @@ export async function getInternships(): Promise<Internship[]> {
     return MOCK_INTERNSHIPS;
   }
   
-  const url = `https://${apiHost}/?query=internship%20in%20USA&num_pages=1`;
+  const url = `https://${apiHost}/?query=internship%20in%20India&num_pages=1`;
   const options = {
     method: 'GET',
     headers: {
