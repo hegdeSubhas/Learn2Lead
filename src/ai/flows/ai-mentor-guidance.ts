@@ -9,6 +9,7 @@
  */
 
 import {ai} from '@/ai/genkit';
+import {googleSearch} from '@/ai/tools/search';
 import {z} from 'genkit';
 
 const AIMentorGuidanceInputSchema = z.object({
@@ -37,9 +38,12 @@ const prompt = ai.definePrompt({
   name: 'aiMentorGuidancePrompt',
   input: {schema: AIMentorGuidanceInputSchema},
   output: {schema: AIMentorGuidanceOutputSchema},
+  tools: [googleSearch],
   prompt: `You are an AI mentor providing personalized guidance to students.
 
   Based on the student's profile and any specific questions they have, offer guidance on potential career paths and the skills they'll need.
+
+  If you need more information to answer the question, use the provided search tool. You can use it to look up information about careers, required skills, new technologies, or any other relevant topic.
 
   Student Profile: {{{studentProfile}}}
 
