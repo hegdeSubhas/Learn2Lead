@@ -6,6 +6,8 @@ import { ResourceTabs } from "./_components/resource-tabs";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import Image from "next/image";
+import { VideoResourceTabs } from "./_components/video-resource-tabs";
 
 interface Resource {
   name: string;
@@ -72,35 +74,39 @@ function ResourceCard({ resource }: { resource: Resource }) {
 
 function VideoResourceCard({ video }: { video: YouTubeVideo }) {
   return (
-    <div className="flex items-center justify-between p-4 border-b">
-      <div className="flex-1">
-        <h3 className="font-semibold">{video.title}</h3>
-        <p className="text-sm text-muted-foreground">by {video.channelTitle}</p>
-      </div>
-      <Button asChild variant="ghost" size="icon">
-        <a href={`https://www.youtube.com/watch?v=${video.videoId}`} target="_blank" rel="noopener noreferrer">
-          <ArrowUpRight className="h-4 w-4" />
-          <span className="sr-only">Watch</span>
-        </a>
-      </Button>
-    </div>
+    <Card className="flex flex-col overflow-hidden">
+      <a href={`https://www.youtube.com/watch?v=${video.videoId}`} target="_blank" rel="noopener noreferrer" className="block relative h-40 w-full">
+        <Image
+          src={video.thumbnail}
+          alt={video.title}
+          fill
+          className="object-cover"
+        />
+      </a>
+      <CardHeader>
+          <a href={`https://www.youtube.com/watch?v=${video.videoId}`} target="_blank" rel="noopener noreferrer">
+            <CardTitle className="line-clamp-2 text-base leading-snug hover:underline">{video.title}</CardTitle>
+          </a>
+      </CardHeader>
+      <CardContent className="flex-grow">
+          <p className="text-sm text-muted-foreground">by {video.channelTitle}</p>
+      </CardContent>
+    </Card>
   );
 }
 
-async function VideoResourcesList() {
+async function VideoResourcesList({ category }: { category: string }) {
     try {
-        const videos = await getYoutubeVideos();
+        const videos = await getYoutubeVideos(category);
+        if (videos.length === 0) {
+            return <p>No videos found for this category.</p>
+        }
         return (
-            <Card>
-              <CardHeader>
-                <CardTitle>Trending Video Resources</CardTitle>
-              </CardHeader>
-              <CardContent className="p-0">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                 {videos.map((video) => (
                   <VideoResourceCard key={video.videoId} video={video} />
                 ))}
-              </CardContent>
-            </Card>
+            </div>
         )
     } catch (error) {
         return (
@@ -108,7 +114,7 @@ async function VideoResourcesList() {
                 <Terminal className="h-4 w-4" />
                 <AlertTitle>Could Not Fetch Videos</AlertTitle>
                 <AlertDescription>
-                    <p>There was an error fetching the video resources. This might be because the YouTube API key is not configured.</p>
+                    <p>There was an error fetching the video resources. This might be because the YouTube API key is not configured or is invalid.</p>
                     <p className="mt-2 text-xs">Please add your `YOUTUBE_API_KEY` to the `.env` file.</p>
                 </AlertDescription>
             </Alert>
@@ -118,32 +124,31 @@ async function VideoResourcesList() {
 
 function VideoResourcesSkeleton() {
     return (
-        <Card>
-            <CardHeader>
-                <Skeleton className="h-6 w-1/2" />
-            </CardHeader>
-            <CardContent className="p-0">
-                {[...Array(5)].map((_, i) => (
-                    <div key={i} className="flex items-center justify-between p-4 border-b">
-                        <div className="flex-1 space-y-2">
-                            <Skeleton className="h-4 w-3/4" />
-                            <Skeleton className="h-3 w-1/4" />
-                        </div>
-                        <Skeleton className="h-8 w-8" />
-                    </div>
-                ))}
-            </CardContent>
-        </Card>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {[...Array(8)].map((_, i) => (
+                <Card key={i}>
+                    <CardHeader>
+                        <Skeleton className="w-full h-32" />
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                        <Skeleton className="h-4 w-3/4" />
+                        <Skeleton className="h-3 w-1/4" />
+                    </CardContent>
+                </Card>
+            ))}
+        </div>
     )
 }
 
 export default function ResourcesPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: { [key:string]: string | string[] | undefined };
 }) {
 
   const category = typeof searchParams.category === 'string' ? searchParams.category : 'study';
+  const videoCategory = typeof searchParams.video_category === 'string' ? searchParams.video_category : 'general';
+
 
   return (
     <div className="space-y-8">
@@ -169,9 +174,11 @@ export default function ResourcesPage({
           )}
 
           {category === 'videos' && (
-              <Suspense fallback={<VideoResourcesSkeleton/>}>
-                <VideoResourcesList />
-              </Suspense>
+            <VideoResourceTabs currentCategory={videoCategory}>
+                <Suspense fallback={<VideoResourcesSkeleton/>}>
+                    <VideoResourcesList category={videoCategory} />
+                </Suspense>
+            </VideoResourceTabs>
           )}
       </ResourceTabs>
 
