@@ -10,7 +10,6 @@ import {
   LayoutDashboard,
   Map,
   Users,
-  Building,
 } from 'lucide-react';
 
 import {
@@ -28,8 +27,7 @@ export function MainNav() {
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, exact: true },
     { href: '/mentor', label: 'AI Mentor', icon: Bot },
     { href: '/roadmap', label: 'Roadmap', icon: Map },
-    { href: '/jobs', label: 'Jobs', icon: Briefcase },
-    { href: '/internships', label: 'Internships', icon: Building },
+    { href: '/jobs', label: 'Opportunities', icon: Briefcase },
     { href: '/scholarships', label: 'Scholarships', icon: GraduationCap },
     { href: '/quiz', label: 'Quiz', icon: FileQuestion },
     { href: '/connect', label: 'Connect', icon: Users },
