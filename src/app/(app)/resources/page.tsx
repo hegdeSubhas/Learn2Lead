@@ -21,39 +21,58 @@ const studyMaterials: Resource[] = [
     name: "freeCodeCamp",
     description: "Learn to code for free. Build projects. Earn certifications.",
     url: "https://www.freecodecamp.org/",
-    category: "Web Development",
-  },
-   {
-    name: "Smashing Magazine",
-    description: "An online magazine for web designers and developers that offers the latest trends and techniques.",
-    url: "https://www.smashingmagazine.com/",
-    category: "Web Development",
-  },
-  {
-    name: "Coursera",
-    description: "Build skills with courses, certificates, and degrees online from world-class universities and companies.",
-    url: "https://www.coursera.org/",
-    category: "General Learning",
-  },
-   {
-    name: "Khan Academy",
-    description: "Free online courses, lessons & practice for math, science, computer programming, history, and more.",
-    url: "https://www.khanacademy.org/",
-    category: "General Learning",
+    category: "Computer Science",
   },
   {
     name: "GeeksforGeeks",
-    description: "A computer science portal for geeks with a vast collection of articles, tutorials, and interview questions.",
+    description: "A computer science portal with articles, tutorials, and interview questions.",
     url: "https://www.geeksforgeeks.org/",
     category: "Computer Science",
   },
   {
     name: "Kaggle",
-    description: "A platform for data scientists and machine learning engineers to find and publish data sets, and build models.",
+    description: "A platform for data scientists to find datasets and build models.",
     url: "https://www.kaggle.com/",
     category: "Data Science",
   },
+  {
+    name: "Investopedia",
+    description: "A leading source for financial content, from market news to investing education.",
+    url: "https://www.investopedia.com/",
+    category: "Commerce",
+  },
+  {
+    name: "Corporate Finance Institute",
+    description: "Provides online courses and certifications for finance and accounting professionals.",
+    url: "https://corporatefinanceinstitute.com/",
+    category: "Commerce",
+  },
+  {
+    name: "Project Gutenberg",
+    description: "A library of over 60,000 free eBooks, with a focus on older works for which U.S. copyright has expired.",
+    url: "https://www.gutenberg.org/",
+    category: "Arts & Humanities",
+  },
+  {
+    name: "Google Arts & Culture",
+    description: "Explore collections from around the world, created by museums and archives.",
+    url: "https://artsandculture.google.com/",
+    category: "Arts & Humanities",
+  },
+  {
+    name: "Coursera",
+    description: "Build skills with courses online from world-class universities and companies.",
+    url: "https://www.coursera.org/",
+    category: "General Learning",
+  },
+   {
+    name: "Khan Academy",
+    description: "Free online courses, lessons & practice for math, science, and more.",
+    url: "https://www.khanacademy.org/",
+    category: "General Learning",
+  },
 ];
+
 
 const groupedStudyMaterials = studyMaterials.reduce((acc, material) => {
     if (!acc[material.category]) {
