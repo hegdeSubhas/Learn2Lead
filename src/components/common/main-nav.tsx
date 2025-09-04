@@ -10,6 +10,7 @@ import {
   LayoutDashboard,
   Lightbulb,
   BookOpen,
+  CircleUser,
 } from 'lucide-react';
 
 import {
@@ -35,12 +36,15 @@ export function MainNav() {
 
   return (
     <>
-      <SidebarHeader className="p-4">
+      <SidebarHeader className="p-4 flex justify-between items-center">
         <Link href="/dashboard" className="flex items-center gap-2">
           <Logo />
           <h1 className="text-xl font-headline font-semibold text-sidebar-foreground">
             AspireRural
           </h1>
+        </Link>
+         <Link href="/signup" className="flex items-center">
+           <CircleUser className="h-8 w-8 text-sidebar-foreground hover:text-sidebar-primary" />
         </Link>
       </SidebarHeader>
       <SidebarMenu>

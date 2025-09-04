@@ -12,7 +12,6 @@ import {
   GraduationCap,
   Lightbulb,
   BookOpen,
-  Users,
   ArrowRight,
   User,
 } from 'lucide-react';
@@ -61,13 +60,6 @@ const features = [
     icon: BookOpen,
     href: '/resources',
     color: 'text-indigo-500',
-  },
-   {
-    title: 'Connect with Peers',
-    description: 'Find and connect with other students.',
-    icon: Users,
-    href: '/connect',
-    color: 'text-orange-500',
   },
    {
     title: 'Your Profile',
