@@ -10,7 +10,7 @@ import { redirect } from 'next/navigation';
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   // This is a placeholder for user authentication.
   // In a real app, you would check for a valid session.
-  const isAuthenticated = false;
+  const isAuthenticated = true;
 
   if (!isAuthenticated) {
     // Redirect to the landing page if the user is not authenticated.
