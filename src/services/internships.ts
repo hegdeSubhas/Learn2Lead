@@ -9,7 +9,7 @@ export interface Internship {
     type: string | null;
 }
 
-const MOCK_INTERNSHIPS: Internship[] = [
+const MOCK_DATA: Internship[] = [
   {
     id: '1',
     title: 'Software Engineer Intern',
@@ -17,7 +17,7 @@ const MOCK_INTERNSHIPS: Internship[] = [
     location: 'Bengaluru, India',
     description: 'Work on exciting projects and gain hands-on experience with our engineering team. You will be contributing to our core products.',
     url: 'https://www.google.com/search?q=Software+Engineer+Intern',
-    type: 'Full-time',
+    type: 'Internship',
   },
   {
     id: '2',
@@ -26,7 +26,7 @@ const MOCK_INTERNSHIPS: Internship[] = [
     location: 'Bengaluru, India',
     description: 'Help define product roadmaps, work with cross-functional teams and conduct market research for our upcoming product launches.',
     url: 'https://www.google.com/search?q=Product+Management+Intern',
-    type: 'Part-time',
+    type: 'Internship',
   },
    {
     id: '3',
@@ -64,19 +64,42 @@ const MOCK_INTERNSHIPS: Internship[] = [
     url: 'https://www.google.com/search?q=AI%2FML+Intern',
     type: 'Internship',
   },
+  {
+    id: '7',
+    title: 'Junior Web Developer',
+    company_name: 'Web Weavers',
+    location: 'Remote',
+    description: 'We are looking for a junior web developer to join our team. You will be working on building and maintaining our client websites.',
+    url: 'https://www.google.com/search?q=Junior+Web+Developer+Job',
+    type: 'Full-time',
+  },
+  {
+    id: '8',
+    title: 'DevOps Engineer',
+    company_name: 'CloudCorp',
+    location: 'Bengaluru, India',
+    description: 'Seeking a DevOps engineer to help us automate our infrastructure and deployment pipelines. Experience with AWS and Kubernetes is a plus.',
+    url: 'https://www.google.com/search?q=DevOps+Engineer+Job',
+    type: 'Full-time',
+  },
 ];
 
 
-export async function getInternships(category?: string): Promise<Internship[]> {
+export async function getInternships(category: string = 'internships'): Promise<Internship[]> {
   const apiKey = process.env.RAPID_INTERNSHIP_API_KEY;
   const apiHost = process.env.RAPID_INTERNSHIP_API_HOST;
 
   if (!apiKey || !apiHost) {
     console.log("RAPID_INTERNSHIP_API_KEY or RAPID_INTERNSHIP_API_HOST is not set. Using mock data.");
-    return MOCK_INTERNSHIPS;
+    const filteredMock = MOCK_DATA.filter(d => {
+        if (category === 'jobs') return d.type?.toLowerCase() === 'full-time';
+        if (category === 'internships') return d.type?.toLowerCase() === 'internship' || d.type?.toLowerCase() === 'part-time';
+        return true;
+    });
+    return filteredMock;
   }
   
-  const query = category ? `${category} internship in India` : 'internship in India';
+  const query = `${category} in India`;
   const url = `https://${apiHost}/?query=${encodeURIComponent(query)}&num_pages=1`;
   const options = {
     method: 'GET',
@@ -97,7 +120,7 @@ export async function getInternships(category?: string): Promise<Internship[]> {
 
     if (!result.data || !Array.isArray(result.data)) {
         console.warn("API response did not contain expected 'data' array. Using mock data.");
-        return MOCK_INTERNSHIPS;
+        return MOCK_DATA;
     }
 
     const internships: Internship[] = result.data.map((job: any) => {

@@ -9,6 +9,7 @@ import { JobTrendsChart } from './_components/job-trends-chart';
 import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { OpportunityList } from './_components/opportunity-list';
+import { OpportunityTabs } from './_components/opportunity-tabs';
 
 function OpportunityListSkeleton() {
     return (
@@ -31,7 +32,14 @@ function OpportunityListSkeleton() {
     )
 }
 
-export default function JobsPage() {
+export default function JobsPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
+
+  const category = typeof searchParams.category === 'string' ? searchParams.category : 'internships';
+
   return (
     <div className="space-y-8">
       <div className="text-center">
@@ -45,15 +53,17 @@ export default function JobsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Available Internships</CardTitle>
+          <CardTitle>Available {category.charAt(0).toUpperCase() + category.slice(1)}</CardTitle>
           <CardDescription>
-            Showing all available internships from our partner network.
+            Showing all available {category} from our partner network.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Suspense fallback={<OpportunityListSkeleton />}>
-            <OpportunityList />
-          </Suspense>
+          <OpportunityTabs currentCategory={category}>
+            <Suspense fallback={<OpportunityListSkeleton />}>
+              <OpportunityList category={category} />
+            </Suspense>
+          </OpportunityTabs>
         </CardContent>
       </Card>
     </div>
