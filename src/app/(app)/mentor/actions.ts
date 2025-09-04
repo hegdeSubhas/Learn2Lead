@@ -20,6 +20,13 @@ export async function getGuidanceAction(
   prevState: MentorState,
   formData: FormData
 ): Promise<MentorState> {
+  if (!process.env.GEMINI_API_KEY) {
+    return {
+      success: false,
+      error: "The AI Mentor is not available. Please configure your Gemini API key in the .env file.",
+    };
+  }
+
   const validatedFields = mentorSchema.safeParse({
     studentProfile: formData.get("studentProfile"),
     specificQuestion: formData.get("specificQuestion"),

@@ -21,6 +21,14 @@ export async function generateRoadmapAction(
   prevState: RoadmapState,
   formData: FormData
 ): Promise<RoadmapState> {
+
+  if (!process.env.GEMINI_API_KEY) {
+    return {
+      success: false,
+      error: "The Roadmap Generator is not available. Please configure your Gemini API key in the .env file.",
+    };
+  }
+
   const validatedFields = roadmapSchema.safeParse({
     jobRole: formData.get("jobRole"),
     interests: formData.get("interests"),
