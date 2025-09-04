@@ -7,6 +7,7 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 const categories = [
     { value: 'study', label: 'Study Materials' },
     { value: 'videos', label: 'Video Resources' },
+    { value: 'ai-finder', label: 'AI Tutorial Finder' },
 ];
 
 export function ResourceTabs({ children, currentCategory }: { children: React.ReactNode, currentCategory: string }) {
@@ -17,6 +18,12 @@ export function ResourceTabs({ children, currentCategory }: { children: React.Re
     const handleValueChange = (category: string) => {
         const params = new URLSearchParams(searchParams);
         params.set('category', category);
+        // Reset video category when switching main tabs
+        if (category !== 'videos') {
+            params.delete('video_category');
+        } else if (!params.has('video_category')) {
+            params.set('video_category', 'general');
+        }
         router.push(`${pathname}?${params.toString()}`);
     };
 

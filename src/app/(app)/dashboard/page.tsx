@@ -27,10 +27,10 @@ const features = [
     color: 'text-blue-500',
   },
   {
-    title: 'Tutorial Finder',
-    description: 'Get AI-powered tutorial suggestions.',
+    title: 'Career Roadmap',
+    description: 'Generate a step-by-step career plan.',
     icon: Lightbulb,
-    href: '/tutorials',
+    href: '/roadmap',
     color: 'text-green-500',
   },
   {

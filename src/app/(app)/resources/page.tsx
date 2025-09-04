@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowUpRight, Terminal } from "lucide-react";
 import { getYoutubeVideos, YouTubeVideo } from "@/services/youtube";
@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import Image from "next/image";
 import { VideoResourceTabs } from "./_components/video-resource-tabs";
+import { TutorialForm } from "./_components/tutorial-form";
 
 interface Resource {
   name: string;
@@ -167,6 +168,20 @@ function VideoResourcesSkeleton() {
     )
 }
 
+function AITutorialFinder() {
+    return (
+        <Card className="max-w-3xl mx-auto">
+            <CardHeader>
+                <CardTitle>AI-Powered Tutorial Finder</CardTitle>
+                <CardDescription>Enter a topic or skill you want to learn, and our AI will suggest a list of relevant learning resources.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <TutorialForm />
+            </CardContent>
+        </Card>
+    )
+}
+
 export default function ResourcesPage({
   searchParams,
 }: {
@@ -213,6 +228,10 @@ export default function ResourcesPage({
                     <VideoResourcesList category={videoCategory} />
                 </Suspense>
             </VideoResourceTabs>
+          )}
+
+          {category === 'ai-finder' && (
+            <AITutorialFinder />
           )}
       </ResourceTabs>
 
