@@ -1,6 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Terminal } from "lucide-react";
+import { getYoutubeVideos, YouTubeVideo } from "@/services/youtube";
+import { ResourceTabs } from "./_components/resource-tabs";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface Resource {
   name: string;
@@ -48,33 +53,6 @@ const studyMaterials: Resource[] = [
   },
 ];
 
-const videoResources: Resource[] = [
-  {
-    name: "Fireship",
-    description: "High-intensity code tutorials to help you build & ship apps faster. New videos every week on Flutter, Firebase, and modern web tech.",
-    url: "https://www.youtube.com/c/Fireship",
-    category: "Web Development",
-  },
-  {
-    name: "CodeWithHarry",
-    description: "Quality programming tutorials in Hindi. Covers a wide range of topics from web development to data science.",
-    url: "https://www.youtube.com/c/CodeWithHarry",
-    category: "Computer Science",
-  },
-  {
-    name: "3Blue1Brown",
-    description: "Intuitive explanations of complex math topics, making abstract concepts easier to understand.",
-    url: "https://www.youtube.com/c/3blue1brown",
-    category: "Mathematics",
-  },
-  {
-    name: "Apna College",
-    description: "High-quality educational content in Hindi for students, focusing on programming, data structures, and algorithms.",
-    url: "https://www.youtube.com/c/ApnaCollege",
-    category: "Computer Science",
-  },
-];
-
 function ResourceCard({ resource }: { resource: Resource }) {
   return (
     <div className="flex items-center justify-between p-4 border-b">
@@ -92,7 +70,81 @@ function ResourceCard({ resource }: { resource: Resource }) {
   );
 }
 
-export default function ResourcesPage() {
+function VideoResourceCard({ video }: { video: YouTubeVideo }) {
+  return (
+    <div className="flex items-center justify-between p-4 border-b">
+      <div className="flex-1">
+        <h3 className="font-semibold">{video.title}</h3>
+        <p className="text-sm text-muted-foreground">by {video.channelTitle}</p>
+      </div>
+      <Button asChild variant="ghost" size="icon">
+        <a href={`https://www.youtube.com/watch?v=${video.videoId}`} target="_blank" rel="noopener noreferrer">
+          <ArrowUpRight className="h-4 w-4" />
+          <span className="sr-only">Watch</span>
+        </a>
+      </Button>
+    </div>
+  );
+}
+
+async function VideoResourcesList() {
+    try {
+        const videos = await getYoutubeVideos();
+        return (
+            <Card>
+              <CardHeader>
+                <CardTitle>Trending Video Resources</CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                {videos.map((video) => (
+                  <VideoResourceCard key={video.videoId} video={video} />
+                ))}
+              </CardContent>
+            </Card>
+        )
+    } catch (error) {
+        return (
+             <Alert variant="destructive">
+                <Terminal className="h-4 w-4" />
+                <AlertTitle>Could Not Fetch Videos</AlertTitle>
+                <AlertDescription>
+                    <p>There was an error fetching the video resources. This might be because the YouTube API key is not configured.</p>
+                    <p className="mt-2 text-xs">Please add your `YOUTUBE_API_KEY` to the `.env` file.</p>
+                </AlertDescription>
+            </Alert>
+        )
+    }
+}
+
+function VideoResourcesSkeleton() {
+    return (
+        <Card>
+            <CardHeader>
+                <Skeleton className="h-6 w-1/2" />
+            </CardHeader>
+            <CardContent className="p-0">
+                {[...Array(5)].map((_, i) => (
+                    <div key={i} className="flex items-center justify-between p-4 border-b">
+                        <div className="flex-1 space-y-2">
+                            <Skeleton className="h-4 w-3/4" />
+                            <Skeleton className="h-3 w-1/4" />
+                        </div>
+                        <Skeleton className="h-8 w-8" />
+                    </div>
+                ))}
+            </CardContent>
+        </Card>
+    )
+}
+
+export default function ResourcesPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
+
+  const category = typeof searchParams.category === 'string' ? searchParams.category : 'study';
+
   return (
     <div className="space-y-8">
       <div className="text-center">
@@ -101,29 +153,28 @@ export default function ResourcesPage() {
           A curated list of high-quality websites and YouTube channels to aid your learning journey.
         </p>
       </div>
+      
+      <ResourceTabs currentCategory={category}>
+          {category === 'study' && (
+              <Card>
+                <CardHeader>
+                    <CardTitle>Study Materials</CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                    {studyMaterials.map((site) => (
+                    <ResourceCard key={site.name} resource={site} />
+                    ))}
+                </CardContent>
+             </Card>
+          )}
 
-      <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Study Materials</CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
-            {studyMaterials.map((site) => (
-              <ResourceCard key={site.name} resource={site} />
-            ))}
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Video Resources</CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
-            {videoResources.map((channel) => (
-              <ResourceCard key={channel.name} resource={channel} />
-            ))}
-          </CardContent>
-        </Card>
-      </div>
+          {category === 'videos' && (
+              <Suspense fallback={<VideoResourcesSkeleton/>}>
+                <VideoResourcesList />
+              </Suspense>
+          )}
+      </ResourceTabs>
+
     </div>
   );
 }
