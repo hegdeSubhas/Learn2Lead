@@ -13,15 +13,6 @@ import { quizCategories } from '@/services/quiz';
 
 type Answers = { [key: number]: string };
 
-function decodeHtml(html: string) {
-    if (typeof window === 'undefined') {
-        return html;
-    }
-    const txt = document.createElement("textarea");
-    txt.innerHTML = html;
-    return txt.value;
-}
-
 export function QuizClient() {
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -66,7 +57,7 @@ export function QuizClient() {
 
   const score = Object.keys(answers).reduce((acc, key) => {
     const index = parseInt(key, 10);
-    if (answers[index] === questions[index].correct_answer) {
+    if (answers[index] === questions[index].correctAnswer) {
       return acc + 1;
     }
     return acc;
@@ -76,11 +67,6 @@ export function QuizClient() {
     if (questions.length === 0) return null;
     return questions[currentQuestion];
   }, [questions, currentQuestion]);
-
-  const options = useMemo(() => {
-    if (!question) return [];
-    return [...question.incorrect_answers, question.correct_answer].sort(() => Math.random() - 0.5);
-  }, [question]);
 
 
   if (isLoading) {
@@ -138,13 +124,13 @@ export function QuizClient() {
           <div className='space-y-4'>
             {questions.map((q, index) => (
                 <div key={index} className="p-4 border rounded-lg">
-                    <p className="font-semibold">{decodeHtml(q.question)}</p>
-                    <p className={`flex items-center gap-2 mt-2 ${answers[index] === q.correct_answer ? 'text-green-600' : 'text-red-600'}`}>
-                        {answers[index] === q.correct_answer ? <CheckCircle size={16}/> : <XCircle size={16}/>}
-                        Your answer: {decodeHtml(answers[index] || "Not answered")}
+                    <p className="font-semibold">{q.question}</p>
+                    <p className={`flex items-center gap-2 mt-2 ${answers[index] === q.correctAnswer ? 'text-green-600' : 'text-red-600'}`}>
+                        {answers[index] === q.correctAnswer ? <CheckCircle size={16}/> : <XCircle size={16}/>}
+                        Your answer: {answers[index] || "Not answered"}
                     </p>
-                    {answers[index] !== q.correct_answer && (
-                        <p className="text-green-700 mt-1">Correct answer: {decodeHtml(q.correct_answer)}</p>
+                    {answers[index] !== q.correctAnswer && (
+                        <p className="text-green-700 mt-1">Correct answer: {q.correctAnswer}</p>
                     )}
                 </div>
             ))}
@@ -163,18 +149,18 @@ export function QuizClient() {
       <p className="text-sm text-muted-foreground">
         Question {currentQuestion + 1} of {questions.length}
       </p>
-      <h3 className="text-lg font-semibold">{decodeHtml(question.question)}</h3>
+      <h3 className="text-lg font-semibold">{question.question}</h3>
       <RadioGroup
         value={answers[currentQuestion] || ''}
         onValueChange={handleAnswerChange}
       >
         <div className="space-y-2">
-          {options.map((option, index) => {
+          {question.options.map((option, index) => {
             const optionId = `option-${currentQuestion}-${index}`;
             return (
               <div key={optionId} className="flex items-center space-x-2">
                 <RadioGroupItem value={option} id={optionId} />
-                <Label htmlFor={optionId}>{decodeHtml(option)}</Label>
+                <Label htmlFor={optionId}>{option}</Label>
               </div>
             );
           })}

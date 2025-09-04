@@ -1,7 +1,7 @@
 'use server';
 
 /**
- * @fileOverview A Genkit flow for generating quiz questions for a given category.
+ * @fileOverview A Genkit flow for generating quiz questions for a given category with an Indian context.
  *
  * - generateQuizQuestions - A function that generates a quiz.
  * - GenerateQuizQuestionsInput - The input type for the generateQuizQuestions function.
@@ -17,10 +17,11 @@ const GenerateQuizQuestionsInputSchema = z.object({
 export type GenerateQuizQuestionsInput = z.infer<typeof GenerateQuizQuestionsInputSchema>;
 
 const QuizQuestionSchema = z.object({
-    question: z.string(),
-    options: z.array(z.string()),
-    correctAnswer: z.string(),
+    question: z.string().describe('The quiz question.'),
+    options: z.array(z.string()).describe('An array of 4 multiple choice options.'),
+    correctAnswer: z.string().describe('The correct answer from the options.'),
 });
+export type QuizQuestion = z.infer<typeof QuizQuestionSchema>;
 
 const GenerateQuizQuestionsOutputSchema = z.object({
   questions: z.array(QuizQuestionSchema).describe('The generated list of quiz questions.'),
@@ -35,7 +36,11 @@ const prompt = ai.definePrompt({
   name: 'generateQuizQuestionsPrompt',
   input: {schema: GenerateQuizQuestionsInputSchema},
   output: {schema: GenerateQuizQuestionsOutputSchema},
-  prompt: `You are a quiz master. Generate a list of 5 multiple-choice questions for the following category: {{{category}}}. Each question should have 4 options and a correct answer.`,
+  prompt: `You are a quiz master. Generate a list of 5 multiple-choice questions for the following category: {{{category}}}.
+
+  IMPORTANT: All questions and answers must be relevant to India.
+
+  Each question should have 4 options and you must specify the correct answer.`,
 });
 
 const generateQuizQuestionsFlow = ai.defineFlow(
