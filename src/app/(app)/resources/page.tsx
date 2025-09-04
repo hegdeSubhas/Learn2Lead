@@ -9,7 +9,7 @@ interface Resource {
   category: string;
 }
 
-const websites: Resource[] = [
+const studyMaterials: Resource[] = [
   {
     name: "freeCodeCamp",
     description: "Learn to code for free. Build projects. Earn certifications.",
@@ -48,7 +48,7 @@ const websites: Resource[] = [
   },
 ];
 
-const youtubeChannels: Resource[] = [
+const videoResources: Resource[] = [
   {
     name: "Fireship",
     description: "High-intensity code tutorials to help you build & ship apps faster. New videos every week on Flutter, Firebase, and modern web tech.",
@@ -105,24 +105,23 @@ export default function ResourcesPage() {
       <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Recommended Websites</CardTitle>
+            <CardTitle>Study Materials</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            {websites.map((site) => (
+            {studyMaterials.map((site) => (
               <ResourceCard key={site.name} resource={site} />
             ))}
           </CardContent>
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Top YouTube Channels</CardTitle>
+            <CardTitle>Video Resources</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            {youtubeChannels.map((channel) => (
+            {videoResources.map((channel) => (
               <ResourceCard key={channel.name} resource={channel} />
             ))}
-          </I_REMOVED_THIS_FILE>
-            </CardContent>
+          </CardContent>
         </Card>
       </div>
     </div>
