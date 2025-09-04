@@ -1,3 +1,4 @@
+
 export interface Scholarship {
     id: string;
     title: string;
