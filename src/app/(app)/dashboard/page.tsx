@@ -79,11 +79,11 @@ export default function DashboardPage() {
         <CardContent>
           <div className="relative h-60 w-full rounded-lg overflow-hidden">
              <Image
-                src="https://picsum.photos/1200/400"
+                src="https://picsum.photos/1200/401"
                 alt="Students collaborating"
                 fill
                 className="object-cover"
-                data-ai-hint="students collaborating"
+                data-ai-hint="education learning"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
               <div className="absolute bottom-0 p-6">
