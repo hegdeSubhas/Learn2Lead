@@ -5,8 +5,18 @@ import {
   SidebarProvider,
   SidebarInset,
 } from '@/components/ui/sidebar';
+import { redirect } from 'next/navigation';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
+  // This is a placeholder for user authentication.
+  // In a real app, you would check for a valid session.
+  const isAuthenticated = false;
+
+  if (!isAuthenticated) {
+    // Redirect to the landing page if the user is not authenticated.
+    redirect('/');
+  }
+
   return (
     <SidebarProvider>
       <Sidebar>
