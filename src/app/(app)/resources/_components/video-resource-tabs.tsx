@@ -11,6 +11,8 @@ const categories = [
     { value: 'ai', label: 'AI/ML' },
     { value: 'mobile', label: 'Mobile Dev' },
     { value: 'cybersecurity', label: 'Cybersecurity' },
+    { value: 'commerce', label: 'Commerce' },
+    { value: 'arts', label: 'Arts' },
 ];
 
 export function VideoResourceTabs({ children, currentCategory }: { children: React.ReactNode, currentCategory: string }) {
@@ -27,7 +29,7 @@ export function VideoResourceTabs({ children, currentCategory }: { children: Rea
     return (
         <Tabs value={currentCategory} onValueChange={handleValueChange} className="w-full">
             <div className="flex justify-center mb-6">
-                <TabsList className="grid w-full max-w-2xl grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+                <TabsList className="grid w-full max-w-4xl grid-cols-2 md:grid-cols-4 lg:grid-cols-8">
                     {categories.map((cat) => (
                         <TabsTrigger key={cat.value} value={cat.value}>{cat.label}</TabsTrigger>
                     ))}

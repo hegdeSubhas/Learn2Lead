@@ -38,6 +38,8 @@ const videoCategoryQueries: Record<string, string> = {
     mobile: 'mobile app development tutorials india',
     ai: 'ai and machine learning tutorials india',
     cybersecurity: 'cybersecurity tutorials for beginners india',
+    commerce: 'commerce and finance tutorials for indian students',
+    arts: 'arts and humanities educational videos for indian students',
 };
 
 
