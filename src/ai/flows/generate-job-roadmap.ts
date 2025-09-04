@@ -19,8 +19,8 @@ const GenerateJobRoadmapInputSchema = z.object({
 export type GenerateJobRoadmapInput = z.infer<typeof GenerateJobRoadmapInputSchema>;
 
 const GenerateJobRoadmapOutputSchema = z.object({
-  roadmap: z.string().describe('The generated roadmap for the specified job roles, tailored to the student\s interests.'),
-  resources: z.string().describe('Suggested resources such as books, websites, or courses.'),
+  roadmap: z.string().describe('The generated roadmap in HTML format.'),
+  resources: z.string().describe('Suggested resources in HTML format.'),
 });
 export type GenerateJobRoadmapOutput = z.infer<typeof GenerateJobRoadmapOutputSchema>;
 
@@ -47,13 +47,14 @@ Roadmap: Provide a clear, actionable, step-by-step guide. Include milestones suc
 - Intermediate skills (e.g., specific frameworks, tools, or specializations).
 - Advanced topics and portfolio-building projects.
 - Networking and job application strategies.
-Format this section using markdown for clarity (e.g., headings, lists).
+Format this section using rich HTML with headings, lists, bold text, and other appropriate tags for clarity.
 
 Resources: Suggest a curated list of high-quality learning materials. Include a mix of:
 - Books (Title and Author).
 - Websites and Blogs (e.g., Smashing Magazine, freeCodeCamp).
 - Online Courses (e.g., specific courses on Coursera, Udemy, or other platforms).
 - Communities (e.g., relevant subreddits, Discord servers).
+Format this section as a well-structured HTML list.
 `,
 });
 

@@ -61,16 +61,16 @@ export function RoadmapForm() {
                 <CardHeader>
                     <CardTitle className="font-headline">Your Personalized Roadmap</CardTitle>
                 </CardHeader>
-                <CardContent className="prose dark:prose-invert max-w-none text-card-foreground whitespace-pre-wrap">
-                    {state.result.roadmap}
+                <CardContent className="prose dark:prose-invert max-w-none text-card-foreground">
+                    <div dangerouslySetInnerHTML={{ __html: state.result.roadmap.replace(/\n/g, '<br />') }} />
                 </CardContent>
             </Card>
              <Card>
                 <CardHeader>
                     <CardTitle className="font-headline">Suggested Resources</CardTitle>
                 </CardHeader>
-                <CardContent className="prose dark:prose-invert max-w-none text-card-foreground whitespace-pre-wrap">
-                    {state.result.resources}
+                <CardContent className="prose dark:prose-invert max-w-none text-card-foreground">
+                    <div dangerouslySetInnerHTML={{ __html: state.result.resources.replace(/\n/g, '<br />') }} />
                 </CardContent>
             </Card>
         </div>

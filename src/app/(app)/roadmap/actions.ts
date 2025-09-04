@@ -44,42 +44,61 @@ export async function generateRoadmapAction(
   }
 
   if (!process.env.GEMINI_API_KEY) {
-    const mockRoadmap = `This is a mock response because the Gemini API key is not configured. The following is a sample roadmap for a **Software Engineer** interested in **Web Development**.
+    const mockRoadmap = `<h3>Phase 1: Foundational Skills (0-3 Months)</h3>
+<ul>
+    <li><strong>Master HTML, CSS, and JavaScript:</strong> These are the absolute fundamentals.
+        <ul>
+            <li>Build 5 simple static websites.</li>
+            <li>Learn about responsive design using Flexbox and CSS Grid.</li>
+        </ul>
+    </li>
+    <li><strong>Learn Git and GitHub:</strong> Version control is essential for collaboration.
+        <ul>
+            <li>Create a GitHub profile and push all your projects there.</li>
+        </ul>
+    </li>
+</ul>
+<h3>Phase 2: Frontend Specialization (3-6 Months)</h3>
+<ul>
+    <li><strong>Choose a JavaScript Framework:</strong> Pick one and stick with it. React is a popular choice.
+        <ul>
+            <li>Complete a comprehensive course on React.</li>
+            <li>Build a small web application, like a to-do list or a weather app.</li>
+        </ul>
+    </li>
+    <li><strong>Learn about APIs:</strong> Understand how to fetch data from a backend service.</li>
+</ul>
+<h3>Phase 3: Backend Development (6-9 Months)</h3>
+<ul>
+    <li><strong>Learn a Backend Language and Framework:</strong> Node.js with Express is a great choice for JavaScript developers.
+        <ul>
+            <li>Build a simple REST API for your frontend application.</li>
+        </ul>
+    </li>
+    <li><strong>Understand Databases:</strong> Learn the basics of SQL (e.g., PostgreSQL) or NoSQL (e.g., MongoDB).</li>
+</ul>
+<h3>Phase 4: Full-Stack and Deployment (9-12+ Months)</h3>
+<ul>
+    <li><strong>Build a Full-Stack Project:</strong> Create a complete application with a frontend, backend, and database. This will be your main portfolio piece.</li>
+    <li><strong>Learn to Deploy:</strong> Understand how to get your application live on the internet using services like Vercel, Netlify, or AWS.</li>
+</ul>`;
 
-### Phase 1: Foundational Skills (0-3 Months)
-*   **Master HTML, CSS, and JavaScript:** These are the absolute fundamentals.
-    *   Build 5 simple static websites.
-    *   Learn about responsive design using Flexbox and CSS Grid.
-*   **Learn Git and GitHub:** Version control is essential for collaboration.
-    *   Create a GitHub profile and push all your projects there.
-
-### Phase 2: Frontend Specialization (3-6 Months)
-*   **Choose a JavaScript Framework:** Pick one and stick with it. React is a popular choice.
-    *   Complete a comprehensive course on React.
-    *   Build a small web application, like a to-do list or a weather app.
-*   **Learn about APIs:** Understand how to fetch data from a backend service.
-
-### Phase 3: Backend Development (6-9 Months)
-*   **Learn a Backend Language and Framework:** Node.js with Express is a great choice for JavaScript developers.
-    *   Build a simple REST API for your frontend application.
-*   **Understand Databases:** Learn the basics of SQL (e.g., PostgreSQL) or NoSQL (e.g., MongoDB).
-
-### Phase 4: Full-Stack and Deployment (9-12+ Months)
-*   **Build a Full-Stack Project:** Create a complete application with a frontend, backend, and database. This will be your main portfolio piece.
-*   **Learn to Deploy:** Understand how to get your application live on the internet using services like Vercel, Netlify, or AWS.`;
-
-    const mockResources = `### Books
-*   "Eloquent JavaScript" by Marijn Haverbeke
-*   "You Don't Know JS" series by Kyle Simpson
-
-### Online Courses
-*   **freeCodeCamp:** Comprehensive curriculum for web development.
-*   **The Odin Project:** A full-stack, project-based curriculum.
-*   **Coursera/Udemy:** Search for courses on React, Node.js, and other specific technologies.
-
-### Communities
-*   **Stack Overflow:** For asking technical questions.
-*   **Dev.to:** A community of developers sharing articles and tutorials.`;
+    const mockResources = `<h3>Books</h3>
+<ul>
+    <li>"Eloquent JavaScript" by Marijn Haverbeke</li>
+    <li>"You Don't Know JS" series by Kyle Simpson</li>
+</ul>
+<h3>Online Courses</h3>
+<ul>
+    <li><strong>freeCodeCamp:</strong> Comprehensive curriculum for web development.</li>
+    <li><strong>The Odin Project:</strong> A full-stack, project-based curriculum.</li>
+    <li><strong>Coursera/Udemy:</strong> Search for courses on React, Node.js, and other specific technologies.</li>
+</ul>
+<h3>Communities</h3>
+<ul>
+    <li><strong>Stack Overflow:</strong> For asking technical questions.</li>
+    <li><strong>Dev.to:</strong> A community of developers sharing articles and tutorials.</li>
+</ul>`;
 
     // Simulate a delay to mimic API call
     await new Promise(resolve => setTimeout(resolve, 1000));
