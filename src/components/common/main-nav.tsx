@@ -9,7 +9,7 @@ import {
   GraduationCap,
   LayoutDashboard,
   Map,
-  Users,
+  BookOpen,
 } from 'lucide-react';
 
 import {
@@ -30,7 +30,7 @@ export function MainNav() {
     { href: '/jobs', label: 'Opportunities', icon: Briefcase },
     { href: '/scholarships', label: 'Scholarships', icon: GraduationCap },
     { href: '/quiz', label: 'Quiz', icon: FileQuestion },
-    { href: '/connect', label: 'Connect', icon: Users },
+    { href: '/resources', label: 'Resources', icon: BookOpen },
   ];
 
   return (
