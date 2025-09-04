@@ -8,7 +8,7 @@ import {
   FileQuestion,
   GraduationCap,
   LayoutDashboard,
-  Map,
+  Lightbulb,
   BookOpen,
 } from 'lucide-react';
 
@@ -26,7 +26,7 @@ export function MainNav() {
   const menuItems = [
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, exact: true },
     { href: '/mentor', label: 'AI Mentor', icon: Bot },
-    { href: '/roadmap', label: 'Roadmap', icon: Map },
+    { href: '/tutorials', label: 'Tutorials', icon: Lightbulb },
     { href: '/jobs', label: 'Opportunities', icon: Briefcase },
     { href: '/scholarships', label: 'Scholarships', icon: GraduationCap },
     { href: '/quiz', label: 'Quiz', icon: FileQuestion },
