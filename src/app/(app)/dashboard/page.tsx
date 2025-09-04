@@ -14,6 +14,7 @@ import {
   BookOpen,
   Users,
   ArrowRight,
+  User,
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -30,7 +31,7 @@ const features = [
     title: 'Career Roadmap',
     description: 'Generate a step-by-step career plan.',
     icon: Lightbulb,
-    href: '/roadmap',
+    href: '/resources?category=ai-finder',
     color: 'text-green-500',
   },
   {
@@ -61,6 +62,20 @@ const features = [
     href: '/resources',
     color: 'text-indigo-500',
   },
+   {
+    title: 'Connect with Peers',
+    description: 'Find and connect with other students.',
+    icon: Users,
+    href: '/connect',
+    color: 'text-orange-500',
+  },
+   {
+    title: 'Your Profile',
+    description: 'View and edit your profile details.',
+    icon: User,
+    href: '/signup',
+    color: 'text-teal-500',
+  }
 ];
 
 export default function DashboardPage() {
@@ -79,7 +94,7 @@ export default function DashboardPage() {
         <CardContent>
           <div className="relative h-60 w-full rounded-lg overflow-hidden">
              <Image
-                src="https://picsum.photos/1200/401"
+                src="https://picsum.photos/1200/400"
                 alt="Students collaborating"
                 fill
                 className="object-cover"
@@ -94,7 +109,7 @@ export default function DashboardPage() {
         </CardContent>
       </Card>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {features.map((feature) => (
           <Link href={feature.href} key={feature.href} className="group">
             <Card className="h-full transition-all duration-300 group-hover:shadow-lg group-hover:-translate-y-1">
