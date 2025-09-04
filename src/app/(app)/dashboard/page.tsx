@@ -13,7 +13,6 @@ import {
   Lightbulb,
   BookOpen,
   ArrowRight,
-  User,
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -61,13 +60,6 @@ const features = [
     href: '/resources',
     color: 'text-indigo-500',
   },
-   {
-    title: 'Your Profile',
-    description: 'View and edit your profile details.',
-    icon: User,
-    href: '/signup',
-    color: 'text-teal-500',
-  }
 ];
 
 export default function DashboardPage() {
@@ -101,7 +93,7 @@ export default function DashboardPage() {
         </CardContent>
       </Card>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {features.map((feature) => (
           <Link href={feature.href} key={feature.href} className="group">
             <Card className="h-full transition-all duration-300 group-hover:shadow-lg group-hover:-translate-y-1">
