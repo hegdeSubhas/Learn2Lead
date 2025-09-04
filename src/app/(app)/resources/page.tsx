@@ -23,10 +23,22 @@ const studyMaterials: Resource[] = [
     url: "https://www.freecodecamp.org/",
     category: "Web Development",
   },
+   {
+    name: "Smashing Magazine",
+    description: "An online magazine for web designers and developers that offers the latest trends and techniques.",
+    url: "https://www.smashingmagazine.com/",
+    category: "Web Development",
+  },
   {
     name: "Coursera",
     description: "Build skills with courses, certificates, and degrees online from world-class universities and companies.",
     url: "https://www.coursera.org/",
+    category: "General Learning",
+  },
+   {
+    name: "Khan Academy",
+    description: "Free online courses, lessons & practice for math, science, computer programming, history, and more.",
+    url: "https://www.khanacademy.org/",
     category: "General Learning",
   },
   {
@@ -36,28 +48,24 @@ const studyMaterials: Resource[] = [
     category: "Computer Science",
   },
   {
-    name: "Khan Academy",
-    description: "Free online courses, lessons & practice for math, science, computer programming, history, and more.",
-    url: "https://www.khanacademy.org/",
-    category: "General Learning",
-  },
-  {
     name: "Kaggle",
     description: "A platform for data scientists and machine learning engineers to find and publish data sets, and build models.",
     url: "https://www.kaggle.com/",
     category: "Data Science",
   },
-  {
-    name: "Smashing Magazine",
-    description: "An online magazine for web designers and developers that offers the latest trends and techniques.",
-    url: "https://www.smashingmagazine.com/",
-    category: "Web Design",
-  },
 ];
+
+const groupedStudyMaterials = studyMaterials.reduce((acc, material) => {
+    if (!acc[material.category]) {
+        acc[material.category] = [];
+    }
+    acc[material.category].push(material);
+    return acc;
+}, {} as Record<string, Resource[]>);
 
 function ResourceCard({ resource }: { resource: Resource }) {
   return (
-    <div className="flex items-center justify-between p-4 border-b">
+    <div className="flex items-center justify-between p-4 border-b last:border-b-0">
       <div className="flex-1">
         <h3 className="font-semibold">{resource.name}</h3>
         <p className="text-sm text-muted-foreground">{resource.description}</p>
@@ -165,9 +173,16 @@ export default function ResourcesPage({
                 <CardHeader>
                     <CardTitle>Study Materials</CardTitle>
                 </CardHeader>
-                <CardContent className="p-0">
-                    {studyMaterials.map((site) => (
-                    <ResourceCard key={site.name} resource={site} />
+                <CardContent className="p-0 space-y-4">
+                    {Object.entries(groupedStudyMaterials).map(([category, resources]) => (
+                      <div key={category}>
+                          <h3 className="font-headline text-lg font-semibold mb-2 px-6 pt-4">{category}</h3>
+                          <div className="border-t">
+                            {resources.map((site) => (
+                                <ResourceCard key={site.name} resource={site} />
+                            ))}
+                          </div>
+                      </div>
                     ))}
                 </CardContent>
              </Card>
