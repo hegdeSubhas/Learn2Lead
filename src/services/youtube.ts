@@ -32,14 +32,14 @@ const MOCK_YOUTUBE_VIDEOS: YouTubeVideo[] = [
 ]
 
 const videoCategoryQueries: Record<string, string> = {
-    general: 'indian student programming tutorials',
-    web: 'web development tutorials for beginners india',
-    data: 'data science tutorials for beginners india',
-    mobile: 'mobile app development tutorials india',
-    ai: 'ai and machine learning tutorials india',
-    cybersecurity: 'cybersecurity tutorials for beginners india',
-    commerce: 'commerce and finance tutorials for indian students',
-    arts: 'arts and humanities educational videos for indian students',
+    general: 'programming tutorial for indian students',
+    web: 'web development full course for beginners india',
+    data: 'data science tutorial for beginners india',
+    mobile: 'mobile app development tutorial for beginners india',
+    ai: 'machine learning tutorial for beginners india',
+    cybersecurity: 'cybersecurity full course for beginners india',
+    commerce: 'finance basics tutorial for indian students',
+    arts: 'indian history and culture tutorial',
 };
 
 
@@ -52,7 +52,7 @@ export async function getYoutubeVideos(category: string = "general"): Promise<Yo
         return MOCK_YOUTUBE_VIDEOS;
     }
 
-    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&type=video&maxResults=8&key=${apiKey}`;
+    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&type=video&videoDefinition=high&maxResults=8&key=${apiKey}`;
 
     try {
         const response = await fetch(url);
