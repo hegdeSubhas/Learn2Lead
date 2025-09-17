@@ -32,14 +32,14 @@ const MOCK_YOUTUBE_VIDEOS: YouTubeVideo[] = [
 ]
 
 const videoCategoryQueries: Record<string, string> = {
-    general: 'programming tutorial for indian students',
-    web: 'web development full course for beginners india',
-    data: 'data science tutorial for beginners india',
-    mobile: 'mobile app development tutorial for beginners india',
-    ai: 'machine learning tutorial for beginners india',
-    cybersecurity: 'cybersecurity full course for beginners india',
-    commerce: 'finance basics tutorial for indian students',
-    arts: 'indian history and culture tutorial',
+    general: 'full programming tutorial for beginners -roadmap',
+    web: 'web development full course tutorial for beginners -roadmap',
+    data: 'data science full course tutorial for beginners -roadmap',
+    mobile: 'mobile app development full course tutorial for beginners -roadmap',
+    ai: 'machine learning full course tutorial for beginners -roadmap',
+    cybersecurity: 'cybersecurity full course tutorial for beginners -roadmap',
+    commerce: 'commerce and finance full course tutorial for students -roadmap',
+    arts: 'indian history and culture full tutorial -roadmap',
 };
 
 
