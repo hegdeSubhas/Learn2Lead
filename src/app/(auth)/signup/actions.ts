@@ -64,7 +64,8 @@ export async function signupAction(
       return { success: false, message: "Signup failed, please try again." };
   }
 
-  // The trigger will have already created a profile. Now, we update it.
+  // The trigger 'handle_new_user' will have already created a profile row.
+  // Now, we update that row with the additional data from the form.
   const { error: profileError } = await supabase
     .from('profiles')
     .update({ 
@@ -77,7 +78,11 @@ export async function signupAction(
 
   if (profileError) {
       console.error("Profile update error:", profileError);
-      return { success: false, message: `Could not update profile: ${profileError.message}` };
+      // Even if the profile update fails, the user was created.
+      // We should inform the user about the success of account creation.
+      // The profile can be updated later.
+      // Let's return a success message but log the profile error.
+       return { success: false, message: `Could not update profile: ${profileError.message}` };
   }
 
   return { 
