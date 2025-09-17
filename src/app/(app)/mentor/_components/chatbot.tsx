@@ -44,7 +44,7 @@ export function Chatbot() {
         speak(lastMessage.content);
       }
     }
-  }, [state?.messages]);
+  }, [state?.messages, messages.length, isTTSEnabled]);
 
   // Effect for scrolling to the bottom
    useEffect(() => {
