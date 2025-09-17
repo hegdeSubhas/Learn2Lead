@@ -55,6 +55,13 @@ export function QuizClient() {
     setShowResults(false);
   }
 
+  const resetQuiz = () => {
+    setQuestions([]);
+    setShowResults(false);
+    setError(null);
+    setSelectedCategory('');
+  }
+
   const score = Object.keys(answers).reduce((acc, key) => {
     const index = parseInt(key, 10);
     if (answers[index] === questions[index].correctAnswer) {
@@ -138,7 +145,7 @@ export function QuizClient() {
         </CardContent>
         <CardFooter className="flex flex-col sm:flex-row gap-2">
             <Button onClick={handleRestart} className="w-full sm:w-auto">Restart Quiz</Button>
-            <Button onClick={() => setQuestions([])} variant="outline" className="w-full sm:w-auto">Choose New Category</Button>
+            <Button onClick={resetQuiz} variant="outline" className="w-full sm:w-auto">Choose New Category</Button>
         </CardFooter>
       </Card>
     );
