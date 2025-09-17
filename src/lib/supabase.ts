@@ -1,11 +1,10 @@
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient as createBrowserClient } from './supabase/client';
+import { createClient as createServerClient } from './supabase/server';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+// This file is a placeholder to avoid breaking changes.
+// You should import from './supabase/client' or './supabase/server' directly.
 
-if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error('Supabase URL and anonymous key are required.');
-}
+const isServer = typeof window === 'undefined';
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = isServer ? createServerClient() : createBrowserClient();

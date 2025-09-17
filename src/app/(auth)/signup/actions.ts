@@ -1,7 +1,7 @@
 
 "use server";
 
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
 
 const signupSchema = z.object({
@@ -48,9 +48,16 @@ export async function signupAction(
       ambition
   } = validatedFields.data;
 
+  const supabase = createClient();
+
   const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+            full_name: name,
+        }
+      }
   });
 
   if (authError) {
@@ -74,7 +81,10 @@ export async function signupAction(
 
   if (profileError) {
       // Potentially delete the user if profile creation fails
-      await supabase.auth.admin.deleteUser(authData.user.id);
+      const { data, error } = await supabase.auth.admin.deleteUser(authData.user.id);
+      if (error) {
+        return { success: false, message: `Could not create profile and failed to clean up user: ${error.message}. Please contact support.` };
+      }
       return { success: false, message: `Could not create profile: ${profileError.message}` };
   }
 

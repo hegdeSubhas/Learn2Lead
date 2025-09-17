@@ -5,21 +5,21 @@ import {
   SidebarProvider,
   SidebarInset,
 } from '@/components/ui/sidebar';
+import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
-  // This is a placeholder for user authentication.
-  // In a real app, you would check for a valid session.
-  const isAuthenticated = false;
+export default async function AppLayout({ children }: { children: React.ReactNode }) {
+  const supabase = createClient();
 
-  if (!isAuthenticated) {
-    redirect('/');
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data?.user) {
+    redirect('/login');
   }
 
   return (
     <SidebarProvider>
       <Sidebar>
-        <MainNav />
+        <MainNav user={data.user}/>
       </Sidebar>
       <SidebarInset>
         <SiteHeader />
