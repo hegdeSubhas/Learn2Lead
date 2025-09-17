@@ -20,12 +20,6 @@ export async function getGuidanceAction(
   prevState: MentorState,
   formData: FormData
 ): Promise<MentorState> {
-  if (!process.env.GEMINI_API_KEY) {
-    return {
-      success: false,
-      error: "The AI Mentor is not available. Please configure your Gemini API key in the .env file.",
-    };
-  }
 
   const validatedFields = mentorSchema.safeParse({
     studentProfile: formData.get("studentProfile"),
@@ -37,6 +31,35 @@ export async function getGuidanceAction(
       success: false,
       error: validatedFields.error.flatten().fieldErrors,
     };
+  }
+
+  if (!process.env.GEMINI_API_KEY) {
+    // Return mock data if API key is not available
+    const mockGuidance = `This is a mock response because the Gemini API key is not configured.
+
+**Potential Career Paths:**
+
+*   **Full-Stack Web Developer:** Given your interest in web development and skills in HTML, CSS, and JavaScript, this is a natural fit. You can build both the user-facing (frontend) and server-side (backend) parts of websites and applications.
+*   **Data Scientist / Analyst:** Your background in mathematics and interest in AI make this a strong option. You would work with large datasets to uncover trends, make predictions, and provide insights for businesses.
+*   **AI/ML Engineer:** This path directly aligns with your aspiration to work in artificial intelligence. You would focus on designing and building intelligent systems and machine learning models.
+
+**Recommended Skills to Develop:**
+
+*   **For Web Development:**
+    *   **JavaScript Frameworks:** Learn a modern framework like React (which this app is built with!), Angular, or Vue.js.
+    *   **Backend Technologies:** Gain proficiency in Node.js with Express, or explore other languages like Python with Django/Flask.
+    *   **Databases:** Understand both SQL (like PostgreSQL) and NoSQL (like MongoDB) databases.
+*   **For Data Science:**
+    *   **Python:** Deepen your knowledge, focusing on libraries like Pandas, NumPy, Scikit-learn, and TensorFlow/PyTorch.
+    *   **Statistics and Probability:** A strong foundation is crucial for understanding data and models.
+    *   **Data Visualization:** Learn tools like Matplotlib, Seaborn, or Tableau to present your findings effectively.
+
+To get the full, personalized experience, please add your Gemini API key to the .env file.`;
+    
+    // Simulate a delay to mimic API call
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    return { success: true, result: { guidance: mockGuidance } };
   }
 
   try {
