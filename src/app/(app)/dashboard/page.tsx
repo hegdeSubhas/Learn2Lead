@@ -29,7 +29,7 @@ const features = [
     title: 'Career Roadmap',
     description: 'Generate a step-by-step career plan.',
     icon: Lightbulb,
-    href: '/resources?category=ai-finder',
+    href: '/roadmap',
     color: 'text-green-500',
   },
   {
