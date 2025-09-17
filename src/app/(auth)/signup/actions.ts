@@ -84,8 +84,26 @@ export async function signupAction(
 
   if (profileError) {
       console.error("Profile insertion error:", profileError);
-       // If profile insertion fails, we should try to clean up the created user
-      const { data: adminData, error: adminError } = await supabase.auth.admin.deleteUser(authData.user.id)
+       // If profile insertion fails, we must clean up the created user
+       // To do this, we need to use the service_role key to create an admin client
+       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+       const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+       if (!supabaseUrl || !serviceRoleKey) {
+            return { success: false, message: "Could not save profile and cleanup failed due to missing server environment variables." };
+       }
+       
+       // THIS REQUIRES a special client that uses the SERVICE_ROLE_KEY
+       // We can't use the standard `createClient()` from lib
+       const { createClient: createAdminClient } = await import('@supabase/supabase-js');
+       const supabaseAdmin = createAdminClient(supabaseUrl, serviceRoleKey, {
+         auth: {
+           autoRefreshToken: false,
+           persistSession: false
+         }
+       });
+
+      const { data: adminData, error: adminError } = await supabaseAdmin.auth.admin.deleteUser(authData.user.id)
       if (adminError) {
         return { success: false, message: `Could not save profile and failed to clean up user: ${adminError.message}. Please contact support.` };
       }
