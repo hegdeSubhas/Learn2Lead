@@ -13,6 +13,7 @@ import {z} from 'genkit';
 
 const GenerateQuizQuestionsInputSchema = z.object({
   category: z.string().describe('The category for which to generate quiz questions.'),
+  numberOfQuestions: z.number().optional().default(5).describe('The number of questions to generate.'),
 });
 export type GenerateQuizQuestionsInput = z.infer<typeof GenerateQuizQuestionsInputSchema>;
 
@@ -36,7 +37,7 @@ const prompt = ai.definePrompt({
   name: 'generateQuizQuestionsPrompt',
   input: {schema: GenerateQuizQuestionsInputSchema},
   output: {schema: GenerateQuizQuestionsOutputSchema},
-  prompt: `You are a quiz master. Generate a list of 5 multiple-choice questions for the following category: {{{category}}}.
+  prompt: `You are a quiz master. Generate a list of {{{numberOfQuestions}}} multiple-choice questions for the following category: {{{category}}}.
 
   IMPORTANT: All questions and answers must be relevant to India.
 

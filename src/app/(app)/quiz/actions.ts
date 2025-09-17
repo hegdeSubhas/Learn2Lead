@@ -12,15 +12,22 @@ type QuizState = {
   success: boolean;
 };
 
-export async function getQuizAction(categoryId: string): Promise<QuizState> {
-  const validatedCategory = z.string().min(1).safeParse(categoryId);
+const quizActionSchema = z.object({
+  categoryId: z.string().min(1),
+  numQuestions: z.number().min(1).max(20),
+});
 
-  if (!validatedCategory.success) {
+export async function getQuizAction(input: { categoryId: string; numQuestions: number }): Promise<QuizState> {
+  const validatedInput = quizActionSchema.safeParse(input);
+
+  if (!validatedInput.success) {
     return {
       success: false,
-      error: "Invalid category provided.",
+      error: "Invalid input provided.",
     };
   }
+
+  const { categoryId, numQuestions } = validatedInput.data;
 
   if (!process.env.GEMINI_API_KEY) {
     const mockQuestions: QuizQuestion[] = [
@@ -31,12 +38,16 @@ export async function getQuizAction(categoryId: string): Promise<QuizState> {
       { question: "What is the national animal of India?", options: ["Lion", "Tiger", "Elephant", "Leopard"], correctAnswer: "Tiger" },
     ];
     await new Promise(resolve => setTimeout(resolve, 1000));
-    return { success: true, questions: mockQuestions };
+    // Return the requested number of questions from the mock list
+    return { success: true, questions: mockQuestions.slice(0, numQuestions) };
   }
 
   try {
-    const categoryName = quizCategories.find(cat => cat.id === Number(validatedCategory.data))?.name || "General Knowledge";
-    const result = await generateQuizQuestions({ category: categoryName });
+    const categoryName = quizCategories.find(cat => cat.id === Number(categoryId))?.name || "General Knowledge";
+    const result = await generateQuizQuestions({ 
+      category: categoryName,
+      numberOfQuestions: numQuestions,
+    });
     return { success: true, questions: result.questions };
   } catch (error) {
     console.error(error);

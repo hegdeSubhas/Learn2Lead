@@ -13,12 +13,15 @@ import { quizCategories } from '@/services/quiz';
 
 type Answers = { [key: number]: string };
 
+const questionAmounts = [5, 10, 15];
+
 export function QuizClient() {
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Answers>({});
   const [showResults, setShowResults] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedAmount, setSelectedAmount] = useState<number>(5);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,7 +30,7 @@ export function QuizClient() {
     setIsLoading(true);
     setError(null);
     setQuestions([]);
-    const result = await getQuizAction(selectedCategory);
+    const result = await getQuizAction({ categoryId: selectedCategory, numQuestions: selectedAmount });
     if (result.success && result.questions) {
       setQuestions(result.questions);
       handleRestart();
@@ -101,8 +104,8 @@ export function QuizClient() {
   if (questions.length === 0) {
     return (
         <div className="space-y-4 text-center">
-            <p>Select a category to start the quiz!</p>
-            <div className="flex w-full max-w-sm items-center space-x-2 mx-auto">
+            <p>Select a category and number of questions to start the quiz!</p>
+            <div className="flex flex-col sm:flex-row w-full max-w-md items-center space-y-2 sm:space-y-0 sm:space-x-2 mx-auto">
                 <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                     <SelectTrigger>
                         <SelectValue placeholder="Choose a category..." />
@@ -113,6 +116,18 @@ export function QuizClient() {
                         ))}
                     </SelectContent>
                 </Select>
+                 <Select value={String(selectedAmount)} onValueChange={(val) => setSelectedAmount(Number(val))}>
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Number of questions" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {questionAmounts.map(amount => (
+                            <SelectItem key={amount} value={String(amount)}>{amount} Questions</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
+             <div className="flex justify-center">
                 <Button onClick={handleStartQuiz} disabled={!selectedCategory || isLoading}>
                     Start Quiz
                 </Button>
@@ -154,19 +169,21 @@ export function QuizClient() {
     );
   }
 
+  if (!question) return null;
+
   // This will only render if there are questions and we are not showing results.
   return (
     <div className="space-y-6">
       <p className="text-sm text-muted-foreground">
         Question {currentQuestion + 1} of {questions.length}
       </p>
-      <h3 className="text-lg font-semibold">{question?.question}</h3>
+      <h3 className="text-lg font-semibold">{question.question}</h3>
       <RadioGroup
         value={answers[currentQuestion] || ''}
         onValueChange={handleAnswerChange}
       >
         <div className="space-y-2">
-          {question?.options.map((option, index) => {
+          {question.options.map((option, index) => {
             const optionId = `option-${currentQuestion}-${index}`;
             return (
               <div key={optionId} className="flex items-center space-x-2">
