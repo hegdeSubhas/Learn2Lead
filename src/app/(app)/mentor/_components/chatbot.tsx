@@ -103,7 +103,9 @@ export function Chatbot() {
     };
 
     recognition.onerror = (event: any) => {
-      console.error('Speech recognition error:', event.error);
+      if (event.error !== 'no-speech') {
+        console.error('Speech recognition error:', event.error);
+      }
       setIsListening(false);
     };
 
