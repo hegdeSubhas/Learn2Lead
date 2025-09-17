@@ -1,7 +1,7 @@
 'use server';
 
 /**
- * @fileOverview An AI mentor that provides personalized guidance to students based on their profile and interests.
+ * @fileOverview An AI chatbot that provides personalized guidance to students based on their conversation history.
  *
  * - getAIMentorGuidance - A function that generates personalized career and skill guidance.
  * - AIMentorGuidanceInput - The input type for the getAIMentorGuidance function.
@@ -12,21 +12,25 @@ import {ai} from '@/ai/genkit';
 import {googleSearch} from '@/ai/tools/search';
 import {z} from 'genkit';
 
+
+export const MessageSchema = z.object({
+  role: z.enum(['user', 'assistant']),
+  content: z.string(),
+});
+
 const AIMentorGuidanceInputSchema = z.object({
+  messages: z.array(MessageSchema).describe('The history of the conversation so far.'),
   studentProfile: z
     .string()
-    .describe('A detailed profile of the student, including their interests, skills, academic background, and career aspirations.'),
-  specificQuestion: z
-    .string()
     .optional()
-    .describe('A specific question the student has about career paths or required skills.'),
+    .describe('A detailed profile of the student, including their interests, skills, academic background, and career aspirations. This is provided for context.'),
 });
 export type AIMentorGuidanceInput = z.infer<typeof AIMentorGuidanceInputSchema>;
 
 const AIMentorGuidanceOutputSchema = z.object({
   guidance: z
     .string()
-    .describe('Personalized guidance for the student, including potential career paths and necessary skills, formatted in rich HTML.'),
+    .describe('Personalized guidance for the student, including potential career paths and necessary skills.'),
 });
 export type AIMentorGuidanceOutput = z.infer<typeof AIMentorGuidanceOutputSchema>;
 
@@ -39,19 +43,29 @@ const prompt = ai.definePrompt({
   input: {schema: AIMentorGuidanceInputSchema},
   output: {schema: AIMentorGuidanceOutputSchema},
   tools: [googleSearch],
-  prompt: `You are an AI mentor providing personalized guidance to students.
+  prompt: `You are an AI mentor providing personalized guidance to students. Your name is 'Learn2Lead Assistant'.
 
-  Based on the student's profile and any specific questions they have, offer guidance on potential career paths and the skills they'll need.
+  You are having a conversation with a student. Keep your responses concise and conversational.
+  
+  If the user asks about careers, skills, or any topic that requires up-to-date information, use the provided search tool.
 
-  If you need more information to answer the question, use the provided search tool. You can use it to look up information about careers, required skills, new technologies, or any other relevant topic.
+  Analyze the conversation history to understand the context.
 
-  Format your response using rich HTML, including headings (<h3>), lists (<ul>, <li>), and bold text (<strong>) to make the guidance clear and easy to read.
-
-  Student Profile: {{{studentProfile}}}
-
-  Specific Question: {{{specificQuestion}}}
-
-  Guidance:`,
+  {{#if studentProfile}}
+  Here is the student's profile for additional context:
+  {{{studentProfile}}}
+  {{/if}}
+  
+  Conversation History:
+  {{#each messages}}
+    {{#if (eq role 'user')}}
+        User: {{{content}}}
+    {{else}}
+        Assistant: {{{content}}}
+    {{/if}}
+  {{/each}}
+  
+  Assistant Response:`,
 });
 
 const aiMentorGuidanceFlow = ai.defineFlow(

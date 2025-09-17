@@ -1,84 +1,104 @@
 "use server";
 
 import { getAIMentorGuidance } from "@/ai/flows/ai-mentor-guidance";
+import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
 
-const mentorSchema = z.object({
-  studentProfile: z.string().min(20, "Profile must be at least 20 characters long."),
-  specificQuestion: z.string().optional(),
+export const MessageSchema = z.object({
+  role: z.enum(['user', 'assistant']),
+  content: z.string(),
 });
+export type Message = z.infer<typeof MessageSchema>;
 
 export type MentorState = {
   result?: {
     guidance: string;
   };
+  messages?: Message[];
   error?: any;
   success: boolean;
 };
 
+// This function now handles a full conversation
 export async function getGuidanceAction(
   prevState: MentorState,
   formData: FormData
 ): Promise<MentorState> {
+  
+  const userInput = formData.get("userInput") as string;
+  const pastMessagesRaw = formData.get("messages") as string;
 
-  const validatedFields = mentorSchema.safeParse({
-    studentProfile: formData.get("studentProfile"),
-    specificQuestion: formData.get("specificQuestion"),
-  });
-
-  if (!validatedFields.success) {
+  if (!userInput || userInput.trim().length === 0) {
     return {
+      ...prevState,
       success: false,
-      error: validatedFields.error.flatten().fieldErrors,
+      error: "Please enter a message.",
     };
   }
 
+  let pastMessages: Message[] = [];
+  try {
+    pastMessages = JSON.parse(pastMessagesRaw);
+  } catch (e) {
+    return {
+      ...prevState,
+      success: false,
+      error: "Invalid message history.",
+    };
+  }
+
+  const allMessages: Message[] = [...pastMessages, { role: 'user', content: userInput }];
+
   if (!process.env.GEMINI_API_KEY) {
     // Return mock data if API key is not available
-    const mockGuidance = `
-      <h3>This is a mock response because the Gemini API key is not configured.</h3>
-
-      <h4>Potential Career Paths:</h4>
-      <ul>
-          <li><strong>Full-Stack Web Developer:</strong> Given your interest in web development and skills in HTML, CSS, and JavaScript, this is a natural fit. You can build both the user-facing (frontend) and server-side (backend) parts of websites and applications.</li>
-          <li><strong>Data Scientist / Analyst:</strong> Your background in mathematics and interest in AI make this a strong option. You would work with large datasets to uncover trends, make predictions, and provide insights for businesses.</li>
-          <li><strong>AI/ML Engineer:</strong> This path directly aligns with your aspiration to work in artificial intelligence. You would focus on designing and building intelligent systems and machine learning models.</li>
-      </ul>
-
-      <h4>Recommended Skills to Develop:</h4>
-      <ul>
-          <li><strong>For Web Development:</strong>
-              <ul>
-                  <li>JavaScript Frameworks: Learn a modern framework like React, Angular, or Vue.js.</li>
-                  <li>Backend Technologies: Gain proficiency in Node.js with Express, or explore other languages like Python with Django/Flask.</li>
-                  <li>Databases: Understand both SQL (like PostgreSQL) and NoSQL (like MongoDB) databases.</li>
-              </ul>
-          </li>
-          <li><strong>For Data Science:</strong>
-              <ul>
-                  <li>Python: Deepen your knowledge, focusing on libraries like Pandas, NumPy, Scikit-learn, and TensorFlow/PyTorch.</li>
-                  <li>Statistics and Probability: A strong foundation is crucial for understanding data and models.</li>
-                  <li>Data Visualization: Learn tools like Matplotlib, Seaborn, or Tableau to present your findings effectively.</li>
-              </ul>
-          </li>
-      </ul>
-      <p>To get the full, personalized experience, please add your Gemini API key to the .env file.</p>
-    `;
+    const mockGuidance = "This is a mock response because the Gemini API key is not configured. I am a helpful AI assistant ready to provide guidance on careers, skills, and learning paths. Ask me anything!";
     
-    // Simulate a delay to mimic API call
+    // Simulate a delay
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    return { success: true, result: { guidance: mockGuidance } };
+    return { 
+        success: true, 
+        messages: [...allMessages, { role: 'assistant', content: mockGuidance }]
+    };
+  }
+
+  // Fetch student profile for context
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  let studentProfileString = "";
+  if (user) {
+    const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+    if (profile) {
+        studentProfileString = `
+            Name: ${profile.full_name || 'N/A'}
+            Education: ${profile.education || 'N/A'}
+            Skills: ${profile.skills || 'N/A'}
+            Hobbies: ${profile.hobbies || 'N/A'}
+            Ambition: ${profile.ambition || 'N/A'}
+        `;
+    }
   }
 
   try {
     const result = await getAIMentorGuidance({
-      studentProfile: validatedFields.data.studentProfile,
-      specificQuestion: validatedFields.data.specificQuestion,
+      messages: allMessages,
+      studentProfile: studentProfileString,
     });
-    return { success: true, result };
+    
+    const newAssistantMessage: Message = {
+        role: 'assistant',
+        content: result.guidance,
+    };
+
+    return { success: true, messages: [...allMessages, newAssistantMessage] };
+
   } catch (error) {
     console.error(error);
-    return { success: false, error: "Failed to get guidance. Please try again." };
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+    return { 
+        ...prevState,
+        success: false, 
+        error: `Failed to get guidance. ${errorMessage}` 
+    };
   }
 }

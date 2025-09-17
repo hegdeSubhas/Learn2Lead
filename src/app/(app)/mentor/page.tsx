@@ -1,4 +1,4 @@
-import { MentorForm } from './_components/mentor-form';
+import { Chatbot } from './_components/chatbot';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 export default function MentorPage() {
@@ -6,19 +6,19 @@ export default function MentorPage() {
     <div className="space-y-8">
       <div className="text-center">
         <h1 className="text-4xl font-headline font-bold">
-          AI Mentor
+          AI Chatbot
         </h1>
         <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-          Describe your profile, skills, and aspirations to receive personalized guidance from your AI career mentor.
+          Ask questions, get advice, and practice your skills with your personal AI-powered chat assistant. Use the microphone for a hands-free experience.
         </p>
       </div>
-      <Card className="max-w-3xl mx-auto">
+      <Card className="max-w-3xl mx-auto h-[70vh] flex flex-col">
         <CardHeader>
-          <CardTitle>Get Career Guidance</CardTitle>
-          <CardDescription>The more detail you provide, the better the advice will be.</CardDescription>
+          <CardTitle>Conversation</CardTitle>
+          <CardDescription>Start the conversation by typing or using your voice.</CardDescription>
         </CardHeader>
-        <CardContent>
-          <MentorForm />
+        <CardContent className="flex-grow flex flex-col">
+          <Chatbot />
         </CardContent>
       </Card>
     </div>
