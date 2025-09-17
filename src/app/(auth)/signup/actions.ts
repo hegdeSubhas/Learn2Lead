@@ -3,6 +3,8 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
 
 const signupSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -80,11 +82,24 @@ export async function signupAction(
   });
 
   if (profileError) {
-      // Potentially delete the user if profile creation fails
-      const { data, error } = await supabase.auth.admin.deleteUser(authData.user.id);
-      if (error) {
-        return { success: false, message: `Could not create profile and failed to clean up user: ${error.message}. Please contact support.` };
+      // If profile creation fails, we need to delete the user we just created.
+      // This requires admin privileges.
+      const supabaseAdmin = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!,
+        {
+          cookies: {
+            get: (name: string) => cookies().get(name)?.value,
+          },
+        }
+      );
+
+      const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(authData.user.id);
+
+      if (deleteError) {
+        return { success: false, message: `Could not create profile and failed to clean up user: ${deleteError.message}. Please contact support.` };
       }
+
       return { success: false, message: `Could not create profile: ${profileError.message}` };
   }
 
