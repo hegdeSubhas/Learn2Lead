@@ -1,17 +1,38 @@
 "use client"
 
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2 } from "lucide-react";
+import { Loader2, Terminal } from "lucide-react";
+import { signupAction } from "../actions";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+
+function SubmitButton() {
+    const { pending } = useFormStatus();
+    return (
+        <Button type="submit" disabled={pending} className="w-full">
+            {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Create Account
+        </Button>
+    )
+}
 
 export function SignupForm() {
-    // In a real app, you'd use useFormState and an action here.
-    const pending = false;
+    const initialState = { success: false, message: "" };
+    const [state, formAction] = useActionState(signupAction, initialState);
 
     return (
-        <form className="space-y-4">
+        <form action={formAction} className="space-y-4">
+             {state?.message && (
+                <Alert variant={state.success ? "default" : "destructive"}>
+                    <Terminal className="h-4 w-4" />
+                    <AlertTitle>{state.success ? "Success" : "Error"}</AlertTitle>
+                    <AlertDescription>{state.message}</AlertDescription>
+                </Alert>
+            )}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                     <Label htmlFor="name">Full Name</Label>
@@ -50,10 +71,7 @@ export function SignupForm() {
                 <Label htmlFor="password">Password</Label>
                 <Input id="password" name="password" type="password" required />
             </div>
-            <Button type="submit" disabled={pending} className="w-full">
-                {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Create Account
-            </Button>
+            <SubmitButton />
         </form>
     )
 }

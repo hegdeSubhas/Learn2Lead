@@ -13,13 +13,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const isAuthenticated = false;
 
   if (!isAuthenticated) {
-    // In a real app, this would be `true` after login.
-    // For now, we allow access to demonstrate the app flow.
-    // To test the redirect, you can set this to `false`.
-    const isTesting = true;
-    if (!isTesting) {
-      redirect('/');
-    }
+    redirect('/');
   }
 
   return (
