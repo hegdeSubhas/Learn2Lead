@@ -41,7 +41,12 @@ export async function signupAction(
       name,
       email,
       password,
-      ...profileData
+      phone,
+      age,
+      education,
+      skills,
+      hobbies,
+      ambition
   } = validatedFields.data;
 
   const supabase = createClient();
@@ -50,12 +55,6 @@ export async function signupAction(
   const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        // You can pass metadata here, but it's often easier to handle it in the profile
-        data: {
-            full_name: name,
-        }
-      }
   });
 
   if (authError) {
@@ -72,12 +71,12 @@ export async function signupAction(
     .insert({ 
       id: authData.user.id,
       full_name: name,
-      phone: profileData.phone,
-      age: profileData.age,
-      education: profileData.education,
-      skills: profileData.skills,
-      hobbies: profileData.hobbies,
-      ambition: profileData.ambition,
+      phone,
+      age,
+      education,
+      skills,
+      hobbies,
+      ambition,
       updated_at: new Date().toISOString() 
     });
 
@@ -88,6 +87,9 @@ export async function signupAction(
        // To do this, we need to use the service_role key to create an admin client
        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
        const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+       // Diagnostic log
+       console.log('Attempting cleanup with service role key:', serviceRoleKey ? 'Key Found' : 'Key NOT Found');
 
        if (!supabaseUrl || !serviceRoleKey) {
             return { success: false, message: "Could not save profile and cleanup failed due to missing server environment variables." };
