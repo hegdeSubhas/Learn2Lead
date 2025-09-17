@@ -83,8 +83,16 @@ export async function signupAction(
 
   if (profileError) {
       console.error("Profile insertion error:", profileError);
-       // If profile insertion fails, we must clean up the created user
-       // To do this, we need to use the service_role key to create an admin client
+
+      // Check for the specific "table not found" error
+      if (profileError.code === '42P01') {
+        return {
+          success: false,
+          message: "Database setup is incomplete. The 'profiles' table was not found. Please run the required SQL script in your Supabase dashboard's SQL Editor."
+        }
+      }
+
+       // If profile insertion fails for another reason, we must clean up the created user
        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
        const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -96,7 +104,6 @@ export async function signupAction(
        }
        
        // THIS REQUIRES a special client that uses the SERVICE_ROLE_KEY
-       // We can't use the standard `createClient()` from lib
        const { createClient: createAdminClient } = await import('@supabase/supabase-js');
        const supabaseAdmin = createAdminClient(supabaseUrl, serviceRoleKey, {
          auth: {
