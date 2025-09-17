@@ -57,9 +57,11 @@ export function QuizClient() {
 
   const resetQuiz = () => {
     setQuestions([]);
+    setAnswers({});
     setShowResults(false);
     setError(null);
     setSelectedCategory('');
+    setCurrentQuestion(0);
   }
 
   const score = Object.keys(answers).reduce((acc, key) => {
@@ -95,7 +97,8 @@ export function QuizClient() {
     )
   }
 
-  if (questions.length === 0 || !question) {
+  // If questions are not loaded yet, show category selector
+  if (questions.length === 0) {
     return (
         <div className="space-y-4 text-center">
             <p>Select a category to start the quiz!</p>
@@ -151,18 +154,19 @@ export function QuizClient() {
     );
   }
 
+  // This will only render if there are questions and we are not showing results.
   return (
     <div className="space-y-6">
       <p className="text-sm text-muted-foreground">
         Question {currentQuestion + 1} of {questions.length}
       </p>
-      <h3 className="text-lg font-semibold">{question.question}</h3>
+      <h3 className="text-lg font-semibold">{question?.question}</h3>
       <RadioGroup
         value={answers[currentQuestion] || ''}
         onValueChange={handleAnswerChange}
       >
         <div className="space-y-2">
-          {question.options.map((option, index) => {
+          {question?.options.map((option, index) => {
             const optionId = `option-${currentQuestion}-${index}`;
             return (
               <div key={optionId} className="flex items-center space-x-2">
