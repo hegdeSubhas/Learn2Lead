@@ -60,13 +60,7 @@ export function MainNav({ user }: { user: User }) {
 
   return (
     <>
-      <SidebarHeader className="p-4 flex justify-between items-center">
-        <Link href="/dashboard" className="flex items-center gap-2">
-          <Logo />
-          <h1 className="text-xl font-headline font-semibold text-sidebar-foreground">
-            Learn2Lead
-          </h1>
-        </Link>
+      <SidebarHeader className="p-4 flex items-center gap-3">
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
@@ -77,7 +71,7 @@ export function MainNav({ user }: { user: User }) {
                     </Avatar>
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end" forceMount>
+            <DropdownMenuContent className="w-56" align="start" forceMount>
                 <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
                         <p className="text-sm font-medium leading-none">{user.user_metadata?.full_name || 'User'}</p>
@@ -102,6 +96,13 @@ export function MainNav({ user }: { user: User }) {
                 </form>
             </DropdownMenuContent>
         </DropdownMenu>
+
+        <Link href="/dashboard" className="flex items-center gap-2">
+          <Logo />
+          <h1 className="text-xl font-headline font-semibold text-sidebar-foreground">
+            Learn2Lead
+          </h1>
+        </Link>
 
       </SidebarHeader>
       <SidebarMenu>
