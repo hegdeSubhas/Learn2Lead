@@ -64,7 +64,7 @@ export function MainNav({ user }: { user: User }) {
         <Link href="/dashboard" className="flex items-center gap-2">
           <Logo />
           <h1 className="text-xl font-headline font-semibold text-sidebar-foreground">
-            AspireRural
+            Learn2Lead
           </h1>
         </Link>
         <DropdownMenu>

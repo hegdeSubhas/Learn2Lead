@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'AspireRural',
+  title: 'Learn2Lead',
   description: 'Guidance and opportunities for rural students.',
 };
 

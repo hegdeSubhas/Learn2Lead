@@ -68,7 +68,7 @@ export default function DashboardPage() {
       <Card className="border-0 shadow-none">
         <CardHeader>
           <CardTitle className="font-headline text-4xl">
-            Welcome to AspireRural
+            Welcome to Learn2Lead
           </CardTitle>
           <CardDescription className="text-lg">
             Your journey to a successful career starts here. Explore resources
