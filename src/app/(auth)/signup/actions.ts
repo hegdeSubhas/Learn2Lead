@@ -3,8 +3,6 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
 
 const signupSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -32,22 +30,18 @@ export async function signupAction(
   );
 
   if (!validatedFields.success) {
+    const firstError = Object.values(validatedFields.error.flatten().fieldErrors)[0]?.[0];
     return {
       success: false,
-      message: validatedFields.error.flatten().fieldErrors[Object.keys(validatedFields.error.flatten().fieldErrors)[0]][0],
+      message: firstError || "Invalid input provided.",
     };
   }
-
+  
   const {
       name,
       email,
       password,
-      phone,
-      age,
-      education,
-      skills,
-      hobbies,
-      ambition
+      ...profileData
   } = validatedFields.data;
 
   const supabase = createClient();
@@ -70,37 +64,20 @@ export async function signupAction(
       return { success: false, message: "Signup failed, please try again." };
   }
 
-  const { error: profileError } = await supabase.from('profiles').insert({
-      id: authData.user.id,
-      full_name: name,
-      phone,
-      age,
-      education,
-      skills,
-      hobbies,
-      ambition,
-  });
+  // The trigger will have already created a profile. Now, we update it.
+  const { error: profileError } = await supabase
+    .from('profiles')
+    .update({ 
+      ...profileData,
+      full_name: name, // also update full_name here
+      updated_at: new Date().toISOString() 
+    })
+    .eq('id', authData.user.id);
+
 
   if (profileError) {
-      // If profile creation fails, we need to delete the user we just created.
-      // This requires admin privileges.
-      const supabaseAdmin = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        {
-          cookies: {
-            get: (name: string) => cookies().get(name)?.value,
-          },
-        }
-      );
-
-      const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(authData.user.id);
-
-      if (deleteError) {
-        return { success: false, message: `Could not create profile and failed to clean up user: ${deleteError.message}. Please contact support.` };
-      }
-
-      return { success: false, message: `Could not create profile: ${profileError.message}` };
+      console.error("Profile update error:", profileError);
+      return { success: false, message: `Could not update profile: ${profileError.message}` };
   }
 
   return { 
