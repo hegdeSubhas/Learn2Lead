@@ -35,26 +35,35 @@ export async function getGuidanceAction(
 
   if (!process.env.GEMINI_API_KEY) {
     // Return mock data if API key is not available
-    const mockGuidance = `This is a mock response because the Gemini API key is not configured.
+    const mockGuidance = `
+      <h3>This is a mock response because the Gemini API key is not configured.</h3>
 
-**Potential Career Paths:**
+      <h4>Potential Career Paths:</h4>
+      <ul>
+          <li><strong>Full-Stack Web Developer:</strong> Given your interest in web development and skills in HTML, CSS, and JavaScript, this is a natural fit. You can build both the user-facing (frontend) and server-side (backend) parts of websites and applications.</li>
+          <li><strong>Data Scientist / Analyst:</strong> Your background in mathematics and interest in AI make this a strong option. You would work with large datasets to uncover trends, make predictions, and provide insights for businesses.</li>
+          <li><strong>AI/ML Engineer:</strong> This path directly aligns with your aspiration to work in artificial intelligence. You would focus on designing and building intelligent systems and machine learning models.</li>
+      </ul>
 
-*   **Full-Stack Web Developer:** Given your interest in web development and skills in HTML, CSS, and JavaScript, this is a natural fit. You can build both the user-facing (frontend) and server-side (backend) parts of websites and applications.
-*   **Data Scientist / Analyst:** Your background in mathematics and interest in AI make this a strong option. You would work with large datasets to uncover trends, make predictions, and provide insights for businesses.
-*   **AI/ML Engineer:** This path directly aligns with your aspiration to work in artificial intelligence. You would focus on designing and building intelligent systems and machine learning models.
-
-**Recommended Skills to Develop:**
-
-*   **For Web Development:**
-    *   **JavaScript Frameworks:** Learn a modern framework like React (which this app is built with!), Angular, or Vue.js.
-    *   **Backend Technologies:** Gain proficiency in Node.js with Express, or explore other languages like Python with Django/Flask.
-    *   **Databases:** Understand both SQL (like PostgreSQL) and NoSQL (like MongoDB) databases.
-*   **For Data Science:**
-    *   **Python:** Deepen your knowledge, focusing on libraries like Pandas, NumPy, Scikit-learn, and TensorFlow/PyTorch.
-    *   **Statistics and Probability:** A strong foundation is crucial for understanding data and models.
-    *   **Data Visualization:** Learn tools like Matplotlib, Seaborn, or Tableau to present your findings effectively.
-
-To get the full, personalized experience, please add your Gemini API key to the .env file.`;
+      <h4>Recommended Skills to Develop:</h4>
+      <ul>
+          <li><strong>For Web Development:</strong>
+              <ul>
+                  <li>JavaScript Frameworks: Learn a modern framework like React, Angular, or Vue.js.</li>
+                  <li>Backend Technologies: Gain proficiency in Node.js with Express, or explore other languages like Python with Django/Flask.</li>
+                  <li>Databases: Understand both SQL (like PostgreSQL) and NoSQL (like MongoDB) databases.</li>
+              </ul>
+          </li>
+          <li><strong>For Data Science:</strong>
+              <ul>
+                  <li>Python: Deepen your knowledge, focusing on libraries like Pandas, NumPy, Scikit-learn, and TensorFlow/PyTorch.</li>
+                  <li>Statistics and Probability: A strong foundation is crucial for understanding data and models.</li>
+                  <li>Data Visualization: Learn tools like Matplotlib, Seaborn, or Tableau to present your findings effectively.</li>
+              </ul>
+          </li>
+      </ul>
+      <p>To get the full, personalized experience, please add your Gemini API key to the .env file.</p>
+    `;
     
     // Simulate a delay to mimic API call
     await new Promise(resolve => setTimeout(resolve, 1000));

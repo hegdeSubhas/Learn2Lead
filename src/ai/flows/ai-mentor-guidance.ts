@@ -26,7 +26,7 @@ export type AIMentorGuidanceInput = z.infer<typeof AIMentorGuidanceInputSchema>;
 const AIMentorGuidanceOutputSchema = z.object({
   guidance: z
     .string()
-    .describe('Personalized guidance for the student, including potential career paths and necessary skills.'),
+    .describe('Personalized guidance for the student, including potential career paths and necessary skills, formatted in rich HTML.'),
 });
 export type AIMentorGuidanceOutput = z.infer<typeof AIMentorGuidanceOutputSchema>;
 
@@ -44,6 +44,8 @@ const prompt = ai.definePrompt({
   Based on the student's profile and any specific questions they have, offer guidance on potential career paths and the skills they'll need.
 
   If you need more information to answer the question, use the provided search tool. You can use it to look up information about careers, required skills, new technologies, or any other relevant topic.
+
+  Format your response using rich HTML, including headings (<h3>), lists (<ul>, <li>), and bold text (<strong>) to make the guidance clear and easy to read.
 
   Student Profile: {{{studentProfile}}}
 

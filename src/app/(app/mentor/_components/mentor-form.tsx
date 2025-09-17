@@ -64,8 +64,8 @@ export function MentorForm() {
             <Sparkles className="h-6 w-6 text-primary" />
             <CardTitle className="font-headline text-primary">Your Personalized Guidance</CardTitle>
           </CardHeader>
-          <CardContent className="prose dark:prose-invert max-w-none text-foreground whitespace-pre-wrap">
-            {state.result.guidance}
+          <CardContent className="prose dark:prose-invert max-w-none text-foreground">
+            <div dangerouslySetInnerHTML={{ __html: state.result.guidance }} />
           </CardContent>
         </Card>
       )}
