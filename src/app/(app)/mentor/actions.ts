@@ -2,13 +2,7 @@
 
 import { getAIMentorGuidance } from "@/ai/flows/ai-mentor-guidance";
 import { createClient } from "@/lib/supabase/server";
-import { z } from "zod";
-
-export const MessageSchema = z.object({
-  role: z.enum(['user', 'assistant']),
-  content: z.string(),
-});
-export type Message = z.infer<typeof MessageSchema>;
+import type { Message } from "./types";
 
 export type MentorState = {
   result?: {
