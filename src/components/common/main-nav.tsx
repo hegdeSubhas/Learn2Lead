@@ -36,6 +36,7 @@ import { Avatar, AvatarFallback } from '../ui/avatar';
 
 
 function getInitials(name: string) {
+    if (!name) return '';
     const names = name.split(' ');
     if (names.length > 1) {
         return `${names[0][0]}${names[names.length - 1][0]}`.toUpperCase();
@@ -85,7 +86,7 @@ export function MainNav({ user }: { user: User }) {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                    <Link href="/signup">
+                    <Link href="/profile">
                         <CircleUser className="mr-2 h-4 w-4" />
                         <span>Profile</span>
                     </Link>
