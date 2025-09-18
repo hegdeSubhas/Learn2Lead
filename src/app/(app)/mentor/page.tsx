@@ -2,9 +2,11 @@
 import { Chatbot } from './_components/chatbot';
 import { Card, CardContent } from '@/components/ui/card';
 import { createClient } from '@/lib/supabase/server';
+import { cookies } from 'next/headers';
 
 export default async function MentorPage() {
-  const supabase = createClient();
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
   const { data: { user } } = await supabase.auth.getUser();
   const { data: profile } = user ? await supabase.from('profiles').select('role').eq('id', user.id).single() : { data: null };
   const userRole = profile?.role || 'student';

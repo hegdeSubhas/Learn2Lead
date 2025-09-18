@@ -3,6 +3,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from 'next/navigation';
+import { cookies } from "next/headers";
 import { z } from "zod";
 
 const loginSchema = z.object({
@@ -31,7 +32,8 @@ export async function loginAction(
   }
 
   const { email, password } = validatedFields.data;
-  const supabase = createClient();
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
 
   const { error } = await supabase.auth.signInWithPassword({
     email,
@@ -49,7 +51,8 @@ export async function loginAction(
 }
 
 export async function logoutAction() {
-    const supabase = createClient();
+    const cookieStore = cookies();
+    const supabase = createClient(cookieStore);
     await supabase.auth.signOut();
     redirect('/login');
 }

@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { cookies } from 'next/headers';
 
 function SubmissionRow({ submission }: { submission: QuizSubmission }) {
     return (
@@ -40,7 +41,8 @@ export default async function QuizSubmissionsPage({ params }: { params: { quizId
         notFound();
     }
 
-    const supabase = createClient();
+    const cookieStore = cookies();
+    const supabase = createClient(cookieStore);
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {

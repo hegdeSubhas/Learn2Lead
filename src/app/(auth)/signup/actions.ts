@@ -3,6 +3,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { z } from "zod";
 
 const signupSchema = z.object({
@@ -52,7 +53,8 @@ export async function signupAction(
       ambition
   } = validatedFields.data;
 
-  const supabase = createClient();
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
 
   // 1. Create the user in the auth schema
   const { data: authData, error: authError } = await supabase.auth.signUp({

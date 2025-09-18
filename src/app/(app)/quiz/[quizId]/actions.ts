@@ -4,6 +4,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 
 export type QuizQuestion = {
     id: number;
@@ -36,7 +37,8 @@ const submissionSchema = z.object({
 });
 
 export async function submitQuizAction(input: { quizId: number; answers: Record<string, string>}): Promise<SubmissionState> {
-    const supabase = createClient();
+    const cookieStore = cookies();
+    const supabase = createClient(cookieStore);
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {

@@ -9,6 +9,7 @@ import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CreateAnnouncementForm } from './_components/create-announcement-form';
 import { MentorAnnouncementList } from './_components/mentor-announcement-list';
+import { cookies } from 'next/headers';
 
 function ListSkeleton() {
     return (
@@ -28,7 +29,8 @@ function ListSkeleton() {
 
 
 export default async function MyContentPage() {
-  const supabase = createClient();
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {

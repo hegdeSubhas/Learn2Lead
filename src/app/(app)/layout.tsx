@@ -7,10 +7,12 @@ import {
   SidebarInset,
 } from '@/components/ui/sidebar';
 import { createClient } from '@/lib/supabase/server';
+import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const supabase = createClient();
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
 
   const { data, error } = await supabase.auth.getUser();
   if (error || !data?.user) {

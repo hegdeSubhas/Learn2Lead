@@ -3,6 +3,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { z } from "zod";
 
 const questionSchema = z.object({
@@ -27,7 +28,8 @@ export async function createManualQuizAction(
   prevState: CreateQuizState,
   formData: FormData
 ): Promise<CreateQuizState> {
-    const supabase = createClient();
+    const cookieStore = cookies();
+    const supabase = createClient(cookieStore);
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -104,7 +106,8 @@ export async function createAnnouncementAction(
     prevState: AnnouncementState,
     formData: FormData
 ): Promise<AnnouncementState> {
-    const supabase = createClient();
+    const cookieStore = cookies();
+    const supabase = createClient(cookieStore);
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {

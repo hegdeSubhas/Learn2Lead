@@ -20,6 +20,7 @@ import Image from 'next/image';
 import { createClient } from '@/lib/supabase/server';
 import { StudentDashboardContent } from './_components/student-dashboard-content';
 import { MentorDashboardContent } from './_components/mentor-dashboard-content';
+import { cookies } from 'next/headers';
 
 const features = [
   {
@@ -82,7 +83,8 @@ const features = [
 ];
 
 export default async function DashboardPage() {
-  const supabase = createClient();
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {

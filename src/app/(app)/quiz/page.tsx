@@ -7,9 +7,11 @@ import { Terminal, FileQuestion, BookCopy, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { QuizClient } from './_components/quiz-client';
+import { cookies } from 'next/headers';
 
 export default async function QuizPage() {
-    const supabase = createClient();
+    const cookieStore = cookies();
+    const supabase = createClient(cookieStore);
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {

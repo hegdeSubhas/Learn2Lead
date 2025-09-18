@@ -4,6 +4,7 @@ import { getQuizForStudent } from '@/services/quiz';
 import { notFound, redirect } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { QuizPlayer } from './_components/quiz-player';
+import { cookies } from 'next/headers';
 
 export default async function TakeQuizPage({ params }: { params: { quizId: string }}) {
     const quizId = Number(params.quizId);
@@ -11,7 +12,8 @@ export default async function TakeQuizPage({ params }: { params: { quizId: strin
         notFound();
     }
 
-    const supabase = createClient();
+    const cookieStore = cookies();
+    const supabase = createClient(cookieStore);
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {

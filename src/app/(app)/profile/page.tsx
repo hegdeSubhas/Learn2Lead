@@ -8,9 +8,11 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { ProfileForm } from './_components/profile-form';
+import { cookies } from 'next/headers';
 
 export default async function ProfilePage() {
-  const supabase = createClient();
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
 
   const {
     data: { user },

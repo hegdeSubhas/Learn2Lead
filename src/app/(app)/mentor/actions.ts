@@ -3,6 +3,7 @@
 
 import { getAIMentorGuidance } from "@/ai/flows/ai-mentor-guidance";
 import { createClient } from "@/lib/supabase/server";
+import { cookies } from "next/headers";
 import type { Message } from "./types";
 
 export type MentorState = {
@@ -58,7 +59,8 @@ export async function getGuidanceAction(
   }
 
   // Fetch user profile for context
-  const supabase = createClient();
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
   const { data: { user } } = await supabase.auth.getUser();
   let userProfileString = "";
   if (user) {

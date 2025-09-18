@@ -1,5 +1,7 @@
 
 import { createClient } from "@/lib/supabase/server";
+import { cookies } from "next/headers";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 export interface DashboardQuiz {
   id: number;
@@ -15,7 +17,7 @@ export interface DashboardAnnouncement {
   mentor_name: string | null;
 }
 
-async function getConnectedMentorIds(supabase: ReturnType<typeof createClient>, studentId: string): Promise<string[]> {
+async function getConnectedMentorIds(supabase: SupabaseClient, studentId: string): Promise<string[]> {
     const { data: requests, error } = await supabase
         .from('mentor_requests')
         .select('mentor_id')
@@ -30,7 +32,8 @@ async function getConnectedMentorIds(supabase: ReturnType<typeof createClient>, 
 }
 
 export async function getQuizzesForDashboard(studentId: string): Promise<{ data: DashboardQuiz[] | null, error: string | null }> {
-    const supabase = createClient();
+    const cookieStore = cookies();
+    const supabase = createClient(cookieStore);
     const mentorIds = await getConnectedMentorIds(supabase, studentId);
 
     if (mentorIds.length === 0) {
@@ -67,7 +70,8 @@ export async function getQuizzesForDashboard(studentId: string): Promise<{ data:
 }
 
 export async function getAnnouncementsForDashboard(studentId: string): Promise<{ data: DashboardAnnouncement[] | null, error: string | null }> {
-    const supabase = createClient();
+    const cookieStore = cookies();
+    const supabase = createClient(cookieStore);
     const mentorIds = await getConnectedMentorIds(supabase, studentId);
 
     if (mentorIds.length === 0) {

@@ -1,5 +1,6 @@
 
 import { createClient } from "@/lib/supabase/server";
+import { cookies } from "next/headers";
 
 export interface MentorQuiz {
   id: number;
@@ -12,7 +13,8 @@ export interface MentorQuiz {
 }
 
 export async function getMentorQuizzes(mentorId: string): Promise<{ data: MentorQuiz[] | null; error: string | null }> {
-  const supabase = createClient();
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
   
   const { data, error } = await supabase.rpc('get_mentor_quizzes_with_counts', {
     p_mentor_id: mentorId
@@ -35,7 +37,8 @@ export interface QuizSubmission {
 }
 
 export async function getQuizSubmissions(quizId: number, mentorId: string): Promise<{ data: QuizSubmission[] | null; error: string | null; quizTitle: string | null }> {
-    const supabase = createClient();
+    const cookieStore = cookies();
+    const supabase = createClient(cookieStore);
 
     // Verify mentor owns the quiz
     const { data: quizData, error: quizError } = await supabase
@@ -91,7 +94,8 @@ export interface Announcement {
 }
 
 export async function getMentorAnnouncements(mentorId: string): Promise<{ data: Announcement[] | null; error: string | null }> {
-    const supabase = createClient();
+    const cookieStore = cookies();
+    const supabase = createClient(cookieStore);
     const { data, error } = await supabase
         .from('announcements')
         .select('id, content, created_at')

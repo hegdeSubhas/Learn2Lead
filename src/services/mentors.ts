@@ -1,5 +1,6 @@
 
 import { createClient } from "@/lib/supabase/server";
+import { cookies } from "next/headers";
 
 export interface MentorProfile {
   id: string;
@@ -14,7 +15,8 @@ export interface MentorWithRequest extends MentorProfile {
 }
 
 export async function getMentors(studentId: string): Promise<{ data: MentorWithRequest[] | null; error: string | null }> {
-  const supabase = createClient();
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
   
   // 1. Fetch all profiles with the 'mentor' role
   const { data: mentors, error: mentorsError } = await supabase

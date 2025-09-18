@@ -1,5 +1,6 @@
 
 import { createClient } from "@/lib/supabase/server";
+import { cookies } from "next/headers";
 
 interface StudentProfile {
   id: string;
@@ -17,7 +18,8 @@ export interface StudentRequest {
 }
 
 export async function getStudentRequests(mentorId: string): Promise<{ data: StudentRequest[] | null; error: string | null }> {
-  const supabase = createClient();
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
   
   const { data, error } = await supabase
     .from('mentor_requests')
