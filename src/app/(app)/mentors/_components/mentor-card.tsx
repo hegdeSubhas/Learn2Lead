@@ -14,7 +14,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { CircleUser, Send, Check, Clock } from 'lucide-react';
+import { CircleUser, Send, Check, Clock, Mail, Phone } from 'lucide-react';
 import { type MentorWithRequest } from '@/services/mentors';
 import { requestMentorAction } from '../actions';
 import { useToast } from '@/hooks/use-toast';
@@ -104,6 +104,28 @@ export function MentorCard({ mentor }: { mentor: MentorWithRequest }) {
             )) : <p className="text-sm text-muted-foreground">No skills listed.</p>}
           </div>
         </div>
+        {mentor.request_status === 'accepted' && (
+           <div>
+            <h4 className="text-sm font-semibold mb-2">Contact Information</h4>
+            <div className="space-y-2 text-sm text-muted-foreground">
+                {mentor.email && (
+                    <a href={`mailto:${mentor.email}`} className="flex items-center gap-2 hover:text-primary">
+                       <Mail size={14}/>
+                       <span>{mentor.email}</span>
+                    </a>
+                )}
+                {mentor.phone && (
+                    <a href={`tel:${mentor.phone}`} className="flex items-center gap-2 hover:text-primary">
+                        <Phone size={14} />
+                        <span>{mentor.phone}</span>
+                    </a>
+                )}
+                 {!mentor.email && !mentor.phone && (
+                    <p>No contact information provided.</p>
+                )}
+            </div>
+          </div>
+        )}
       </CardContent>
       <CardFooter>
         <form action={formAction} className="w-full">

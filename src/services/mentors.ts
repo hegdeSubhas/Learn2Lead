@@ -8,6 +8,8 @@ export interface MentorProfile {
   education: string | null;
   skills: string | null;
   ambition: string | null;
+  phone: string | null;
+  email: string | null;
 }
 
 export interface MentorWithRequest extends MentorProfile {
@@ -21,7 +23,7 @@ export async function getMentors(studentId: string): Promise<{ data: MentorWithR
   // 1. Fetch all profiles with the 'mentor' role
   const { data: mentors, error: mentorsError } = await supabase
     .from('profiles')
-    .select('id, full_name, education, skills, ambition')
+    .select('id, full_name, education, skills, ambition, phone, email')
     .eq('role', 'mentor');
 
   if (mentorsError) {

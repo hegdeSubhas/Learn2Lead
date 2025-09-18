@@ -83,6 +83,7 @@ export async function signupAction(
       id: authData.user.id,
       full_name: name,
       role,
+      email,
       phone,
       age,
       education,

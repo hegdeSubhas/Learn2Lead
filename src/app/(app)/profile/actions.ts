@@ -62,6 +62,7 @@ export async function updateUserAction(
 
   revalidatePath('/(app)/layout', 'layout');
   revalidatePath('/(app)/profile');
+  revalidatePath('/(app)/mentors');
   
   return { 
       success: true,
