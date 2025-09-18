@@ -14,6 +14,7 @@ import {
   LogOut,
   Users,
   Bell,
+  Library,
 } from 'lucide-react';
 import type { User } from '@supabase/supabase-js';
 
@@ -60,6 +61,7 @@ export function MainNav({ user, profile }: { user: User, profile: any }) {
     { href: '/resources', label: 'Resources', icon: BookOpen, roles: ['student'] },
     { href: '/mentors', label: 'Find a Mentor', icon: Users, roles: ['student'] },
     { href: '/requests', label: 'Student Requests', icon: Bell, roles: ['mentor'] },
+    { href: '/my-content', label: 'My Content', icon: Library, roles: ['mentor'] },
   ];
 
   const visibleMenuItems = allMenuItems.filter(item => item.roles.includes(profile?.role));
