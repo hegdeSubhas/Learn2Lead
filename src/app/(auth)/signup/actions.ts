@@ -3,7 +3,6 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { z } from "zod";
 
 const signupSchema = z.object({
@@ -130,6 +129,6 @@ export async function signupAction(
   
   return { 
       success: true,
-      message: "Signup successful! Please check your email to verify your account."
+      message: "Signup successful! Redirecting to your dashboard..."
   };
 }

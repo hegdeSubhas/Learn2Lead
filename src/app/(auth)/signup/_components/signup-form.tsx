@@ -1,6 +1,6 @@
 "use client"
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Terminal } from "lucide-react";
 import { signupAction } from "../actions";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useRouter } from "next/navigation";
 
 function SubmitButton() {
     const { pending } = useFormStatus();
@@ -23,6 +24,15 @@ function SubmitButton() {
 export function SignupForm() {
     const initialState = { success: false, message: "" };
     const [state, formAction] = useActionState(signupAction, initialState);
+    const router = useRouter();
+
+    useEffect(() => {
+        if (state.success) {
+            // Redirect to dashboard on successful signup
+            router.push('/dashboard');
+        }
+    }, [state.success, router]);
+
 
     return (
         <form action={formAction} className="space-y-4">
