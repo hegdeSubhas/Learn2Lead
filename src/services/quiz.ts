@@ -1,5 +1,6 @@
 
-import { createClient } from "@/lib/supabase/server";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { createClient as createServerClient } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
 
 export type MentorQuiz = {
@@ -22,7 +23,7 @@ export const quizCategories = [
 
 export async function getMentorQuizzesForStudent(studentId: string): Promise<{ data: MentorQuiz[] | null; error: string | null }> {
   const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
+  const supabase = createServerClient(cookieStore);
   
   // Find mentors the student is connected to (status = 'accepted')
   const { data: requests, error: requestError } = await supabase
@@ -89,7 +90,7 @@ export type QuizWithQuestions = {
 
 export async function getQuizForStudent(quizId: number, studentId: string): Promise<{ data: QuizWithQuestions | null; error: string | null }> {
     const cookieStore = cookies();
-    const supabase = createClient(cookieStore);
+    const supabase = createServerClient(cookieStore);
 
     // First, verify the student has access to this quiz through an accepted mentor
     const { data: quizMeta, error: metaError } = await supabase
