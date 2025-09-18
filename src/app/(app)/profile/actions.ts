@@ -1,7 +1,9 @@
+
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 
 const profileSchema = z.object({
@@ -57,9 +59,9 @@ export async function updateUserAction(
     return { success: false, message: `Failed to update profile: ${error.message}` };
   }
 
-  revalidatePath('/profile');
   revalidatePath('/(app)/layout', 'layout');
-
+  revalidatePath('/profile');
+  
   return { 
       success: true,
       message: "Your profile has been updated successfully."

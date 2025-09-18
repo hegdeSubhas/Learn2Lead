@@ -81,8 +81,11 @@ export function MainNav({ user, profile }: { user: User, profile: any }) {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                  <div className="p-2 text-xs text-muted-foreground space-y-1">
+                    <p><strong>Phone:</strong> {profile?.phone || 'N/A'}</p>
+                    <p><strong>Age:</strong> {profile?.age || 'N/A'}</p>
                     <p><strong>Education:</strong> {profile?.education || 'N/A'}</p>
                     <p><strong>Skills:</strong> {profile?.skills || 'N/A'}</p>
+                    <p><strong>Hobbies:</strong> {profile?.hobbies || 'N/A'}</p>
                     <p><strong>Goal:</strong> {profile?.ambition || 'N/A'}</p>
                 </div>
                 <DropdownMenuSeparator />

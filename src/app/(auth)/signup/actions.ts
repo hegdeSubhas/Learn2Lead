@@ -2,6 +2,8 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 
 const signupSchema = z.object({
@@ -55,6 +57,11 @@ export async function signupAction(
   const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          full_name: name,
+        }
+      }
   });
 
   if (authError) {
@@ -119,6 +126,8 @@ export async function signupAction(
        return { success: false, message: `Could not save profile: ${profileError.message}` };
   }
 
+  revalidatePath('/', 'layout');
+  
   return { 
       success: true,
       message: "Signup successful! Please check your email to verify your account."
