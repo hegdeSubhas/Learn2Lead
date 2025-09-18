@@ -71,14 +71,14 @@ export async function createManualQuizAction(
 
     // Insert quiz and questions within a transaction
     const { error } = await supabase.rpc('create_quiz_with_questions', {
-        mentor_id: user.id,
-        quiz_title: title,
-        quiz_description: description,
-        quiz_topic: topic,
-        questions_data: questions.map(q => ({
+        p_mentor_id: user.id,
+        p_quiz_title: title,
+        p_quiz_topic: topic,
+        p_quiz_description: description,
+        p_questions_data: questions.map(q => ({
             question: q.question,
             options: q.options,
-            correct_answer: q.correctAnswer,
+            correctAnswer: q.correctAnswer,
         }))
     });
 
