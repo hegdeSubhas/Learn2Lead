@@ -3,28 +3,33 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Library, Terminal, User } from 'lucide-react';
+import { Library, Terminal, User, Wand2, PlusCircle } from 'lucide-react';
 import { CreateQuizForm } from './_components/create-quiz-form';
 import { getMentorQuizzes, type MentorQuiz } from '@/services/content';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { CreateManualQuizForm } from './_components/create-manual-quiz-form';
 
 async function QuizList({ quizzes }: { quizzes: MentorQuiz[] }) {
     if (quizzes.length === 0) {
-        return <p className="text-sm text-muted-foreground">You haven't created any quizzes yet.</p>
+        return <p className="text-sm text-muted-foreground text-center py-8">You haven't created any quizzes yet.</p>
     }
     return (
         <div className="space-y-4">
             {quizzes.map(quiz => (
                 <div key={quiz.id} className="border p-4 rounded-lg">
                     <h3 className="font-semibold">{quiz.title}</h3>
-                    <p className="text-sm text-muted-foreground">{quiz.description}</p>
-                    <p className="text-xs text-muted-foreground mt-2">{new Date(quiz.created_at).toLocaleDateString()}</p>
+                    {quiz.description && <p className="text-sm text-muted-foreground">{quiz.description}</p>}
+                    <div className="flex justify-between items-center mt-2">
+                        <p className="text-xs text-muted-foreground">{quiz.question_count} questions</p>
+                        <p className="text-xs text-muted-foreground">{new Date(quiz.created_at).toLocaleDateString()}</p>
+                    </div>
                 </div>
             ))}
         </div>
     )
 }
 
-export default async function MyContentPage() {
+export default async function MyContentPage({ searchParams }: { searchParams: { [key: string]: string | undefined } }) {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -51,6 +56,7 @@ export default async function MyContentPage() {
   }
 
   const { data: quizzes, error } = await getMentorQuizzes(user.id);
+  const currentTab = searchParams.tab || 'ai-generator';
 
   return (
     <div className="space-y-8">
@@ -62,17 +68,45 @@ export default async function MyContentPage() {
         </div>
 
         <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
-            <Card>
-                <CardHeader>
-                    <CardTitle>Create a New Quiz</CardTitle>
-                    <CardDescription>
-                        Generate a quiz on any topic for your students using AI.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <CreateQuizForm />
-                </CardContent>
-            </Card>
+             <Tabs defaultValue={currentTab} className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="ai-generator">
+                        <Wand2 className="mr-2 h-4 w-4" />
+                        AI Generator
+                    </TabsTrigger>
+                    <TabsTrigger value="manual-creator">
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        Manual Creator
+                    </TabsTrigger>
+                </TabsList>
+                <TabsContent value="ai-generator">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Create a New Quiz with AI</CardTitle>
+                            <CardDescription>
+                                Generate a quiz on any topic for your students using AI.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <CreateQuizForm />
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+                <TabsContent value="manual-creator">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Create a Quiz Manually</CardTitle>
+                            <CardDescription>
+                                Build your own quiz by writing the questions and options yourself.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                           <CreateManualQuizForm />
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+            </Tabs>
+
 
             <Card>
                 <CardHeader>
@@ -99,4 +133,3 @@ export default async function MyContentPage() {
     </div>
   );
 }
-

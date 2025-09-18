@@ -7,9 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Terminal, CheckCircle } from "lucide-react";
-import { createQuizAction } from "../actions";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Loader2 } from "lucide-react";
+import { createAiQuizAction } from "../actions";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -18,7 +17,7 @@ function SubmitButton() {
     return (
         <Button type="submit" disabled={pending} className="w-full">
             {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Create Quiz
+            Create Quiz with AI
         </Button>
     )
 }
@@ -28,8 +27,8 @@ const questionAmounts = [5, 10, 15];
 export function CreateQuizForm() {
     const { toast } = useToast();
     const initialState = { success: false, message: "" };
-    const [state, formAction] = useActionState(createQuizAction, initialState);
-
+    const [state, formAction] = useActionState(createAiQuizAction, initialState);
+    
     useEffect(() => {
         if (state.message) {
              toast({
@@ -42,13 +41,6 @@ export function CreateQuizForm() {
 
     return (
         <form action={formAction} className="space-y-4">
-             {state?.message && (
-                <Alert variant={state.success ? "default" : "destructive"} className={state.success ? "border-green-500/50 text-green-700 [&>svg]:text-green-700" : ""}>
-                    {state.success ? <CheckCircle className="h-4 w-4" /> : <Terminal className="h-4 w-4" />}
-                    <AlertTitle>{state.success ? "Success" : "Error"}</AlertTitle>
-                    <AlertDescription>{state.message}</AlertDescription>
-                </Alert>
-            )}
             <div className="space-y-2">
                 <Label htmlFor="title">Quiz Title</Label>
                 <Input id="title" name="title" placeholder="e.g., Introduction to Python" required />
