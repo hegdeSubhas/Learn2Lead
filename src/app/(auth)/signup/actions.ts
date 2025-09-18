@@ -94,11 +94,11 @@ export async function signupAction(
   if (profileError) {
       console.error("Profile insertion error:", profileError);
 
-      // Check for the specific "table not found" error
-      if (profileError.code === '42P01') {
+      // Check for the specific "column not found" error
+      if (profileError.code === '42703' || profileError.message.includes('column "role" does not exist')) {
         return {
           success: false,
-          message: "Database setup is incomplete. The 'profiles' table was not found or the 'role' column is missing. Please run the required SQL script in your Supabase dashboard's SQL Editor."
+          message: "Database schema is out of date. The 'role' column is missing from the 'profiles' table. Please run the required SQL script in your Supabase dashboard's SQL Editor to add it."
         }
       }
 
