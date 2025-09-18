@@ -58,7 +58,7 @@ export async function getQuizSubmissions(quizId: number, mentorId: string): Prom
             id,
             score,
             submitted_at,
-            student:profiles (
+            student:profiles!quiz_submissions_student_id_fkey (
                 full_name
             )
         `)
