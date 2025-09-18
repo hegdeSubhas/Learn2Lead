@@ -56,14 +56,15 @@ export async function getGuidanceAction(
     };
   }
 
-  // Fetch student profile for context
+  // Fetch user profile for context
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  let studentProfileString = "";
+  let userProfileString = "";
   if (user) {
     const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
     if (profile) {
-        studentProfileString = `
+        userProfileString = `
+            Role: ${profile.role || 'student'}
             Name: ${profile.full_name || 'N/A'}
             Education: ${profile.education || 'N/A'}
             Skills: ${profile.skills || 'N/A'}
@@ -76,7 +77,7 @@ export async function getGuidanceAction(
   try {
     const result = await getAIMentorGuidance({
       messages: allMessages,
-      studentProfile: studentProfileString,
+      userProfile: userProfileString,
     });
     
     const newAssistantMessage: Message = {

@@ -19,17 +19,17 @@ const MessageSchema = z.object({
 
 const AIMentorGuidanceInputSchema = z.object({
   messages: z.array(MessageSchema).describe('The history of the conversation so far.'),
-  studentProfile: z
+  userProfile: z
     .string()
     .optional()
-    .describe('A detailed profile of the student, including their interests, skills, academic background, and career aspirations. This is provided for context.'),
+    .describe('A detailed profile of the user, including their role (student or mentor), interests, skills, and background. This is provided for context.'),
 });
 export type AIMentorGuidanceInput = z.infer<typeof AIMentorGuidanceInputSchema>;
 
 const AIMentorGuidanceOutputSchema = z.object({
   guidance: z
     .string()
-    .describe('Personalized guidance for the student, including potential career paths and necessary skills.'),
+    .describe('Personalized guidance for the user, tailored to their role.'),
 });
 export type AIMentorGuidanceOutput = z.infer<typeof AIMentorGuidanceOutputSchema>;
 
@@ -42,27 +42,33 @@ const prompt = ai.definePrompt({
   input: {schema: AIMentorGuidanceInputSchema},
   output: {schema: AIMentorGuidanceOutputSchema},
   tools: [googleSearch],
-  prompt: `You are an AI mentor providing personalized guidance to students. Your name is 'Learn2Lead Assistant'.
+  prompt: `You are an AI assistant for the Learn2Lead platform. Your name is 'Learn2Lead Assistant'.
 
-  You are having a conversation with a student. Keep your responses concise and conversational.
-  
-  IMPORTANT: If the user's message is in Kannada, you MUST respond in Kannada. Otherwise, respond in English.
-  
-  If the user asks about careers, skills, or any topic that requires up-to-date information, use the provided search tool.
+You are having a conversation with a user. Analyze their profile, especially their role, to provide the most relevant assistance. Keep your responses concise and conversational.
 
-  Analyze the conversation history to understand the context.
+IMPORTANT: If the user's message is in Kannada, you MUST respond in Kannada. Otherwise, respond in English.
+If you need up-to-date information, use the provided search tool.
 
-  {{#if studentProfile}}
-  Here is the student's profile for additional context:
-  {{{studentProfile}}}
-  {{/if}}
-  
-  Conversation History:
-  {{#each messages}}
-    {{role}}: {{{content}}}
-  {{/each}}
-  
-  Assistant Response:`,
+---
+USER CONTEXT:
+{{#if userProfile}}
+Here is the user's profile:
+{{{userProfile}}}
+
+Based on their 'role', tailor your responses:
+- If the role is 'student', act as a friendly AI Mentor. Provide guidance on career paths, learning resources, skill development, and answer their academic questions.
+- If the role is 'mentor', act as a helpful teaching assistant. Help them brainstorm quiz questions, generate ideas for lesson plans, structure course content, and suggest teaching strategies.
+{{else}}
+You do not have the user's profile. Assume they are a student and provide general career and learning guidance.
+{{/if}}
+---
+
+CONVERSATION HISTORY:
+{{#each messages}}
+  {{role}}: {{{content}}}
+{{/each}}
+
+Assistant Response:`,
 });
 
 const aiMentorGuidanceFlow = ai.defineFlow(
