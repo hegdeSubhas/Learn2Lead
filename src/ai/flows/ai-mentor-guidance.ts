@@ -46,6 +46,8 @@ const prompt = ai.definePrompt({
 
   You are having a conversation with a student. Keep your responses concise and conversational.
   
+  IMPORTANT: If the user's message is in Kannada, you MUST respond in Kannada. Otherwise, respond in English.
+  
   If the user asks about careers, skills, or any topic that requires up-to-date information, use the provided search tool.
 
   Analyze the conversation history to understand the context.

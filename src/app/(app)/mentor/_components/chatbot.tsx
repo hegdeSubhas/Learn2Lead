@@ -61,7 +61,7 @@ export function Chatbot() {
   const speak = (text: string) => {
     if (typeof window !== 'undefined' && window.speechSynthesis) {
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-IN';
+      utterance.lang = 'kn-IN'; // Set to Kannada
       window.speechSynthesis.cancel(); // Cancel any previous speech
       window.speechSynthesis.speak(utterance);
     }
@@ -92,7 +92,7 @@ export function Chatbot() {
     const recognition = new SpeechRecognition();
     recognition.continuous = false;
     recognition.interimResults = false;
-    recognition.lang = 'en-IN';
+    recognition.lang = 'kn-IN'; // Set to Kannada
 
     recognition.onstart = () => {
       setIsListening(true);
