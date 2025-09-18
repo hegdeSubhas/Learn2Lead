@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -45,7 +46,7 @@ function getInitials(name: string) {
 }
 
 
-export function MainNav({ user }: { user: User }) {
+export function MainNav({ user, profile }: { user: User, profile: any }) {
   const pathname = usePathname();
 
   const menuItems = [
@@ -66,23 +67,29 @@ export function MainNav({ user }: { user: User }) {
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                     <Avatar className="h-8 w-8 text-sidebar-foreground hover:bg-sidebar-primary">
                         <AvatarFallback className="bg-transparent border-2 border-sidebar-foreground">
-                            {user.user_metadata?.full_name ? getInitials(user.user_metadata.full_name) : <CircleUser />}
+                            {profile?.full_name ? getInitials(profile.full_name) : <CircleUser />}
                         </AvatarFallback>
                     </Avatar>
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="start" forceMount>
+            <DropdownMenuContent className="w-64" align="start" forceMount>
                 <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">{user.user_metadata?.full_name || 'User'}</p>
+                    <div className="flex flex-col space-y-2">
+                        <p className="text-sm font-medium leading-none">{profile?.full_name || 'User'}</p>
                         <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
                     </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                 <div className="p-2 text-xs text-muted-foreground space-y-1">
+                    <p><strong>Education:</strong> {profile?.education || 'N/A'}</p>
+                    <p><strong>Skills:</strong> {profile?.skills || 'N/A'}</p>
+                    <p><strong>Goal:</strong> {profile?.ambition || 'N/A'}</p>
+                </div>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                     <Link href="/profile">
                         <CircleUser className="mr-2 h-4 w-4" />
-                        <span>Profile</span>
+                        <span>Edit Profile</span>
                     </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />

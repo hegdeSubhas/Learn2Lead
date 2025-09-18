@@ -1,3 +1,4 @@
+
 import { MainNav } from '@/components/common/main-nav';
 import { SiteHeader } from '@/components/common/site-header';
 import {
@@ -16,10 +17,16 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     redirect('/login');
   }
 
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', data.user.id)
+    .single();
+
   return (
     <SidebarProvider>
       <Sidebar>
-        <MainNav user={data.user}/>
+        <MainNav user={data.user} profile={profile} />
       </Sidebar>
       <SidebarInset>
         <SiteHeader />
