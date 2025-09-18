@@ -16,7 +16,7 @@ export function JobTrendsChart() {
     <Card>
       <CardHeader>
         <CardTitle className="font-headline">In-Demand Fields</CardTitle>
-        <CardDescription>Current demand for popular tech roles (mock data).</CardDescription>
+        <CardDescription>Current demand for popular tech roles.</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="h-80 w-full">
