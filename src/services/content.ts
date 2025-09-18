@@ -58,9 +58,7 @@ export async function getQuizSubmissions(quizId: number, mentorId: string): Prom
             id,
             score,
             submitted_at,
-            student:profiles!quiz_submissions_student_id_fkey (
-                full_name
-            )
+            student:profiles!quiz_submissions_student_id_fkey(full_name)
         `)
         .eq('quiz_id', quizId)
         .order('submitted_at', { ascending: false });
@@ -73,6 +71,7 @@ export async function getQuizSubmissions(quizId: number, mentorId: string): Prom
     const submissions = data.map(s => {
         // The student profile can be null or an array depending on the relationship.
         // This defensive code handles both cases.
+        // @ts-ignore
         const profile = Array.isArray(s.student) ? s.student[0] : s.student;
         return {
             id: s.id,

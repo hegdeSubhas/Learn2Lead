@@ -8,6 +8,17 @@ export type MentorQuiz = {
   mentor_name: string | null;
 }
 
+export const quizCategories = [
+    { id: 1, name: 'General Knowledge' },
+    { id: 2, name: 'Indian History' },
+    { id: 3, name: 'Indian Geography' },
+    { id: 4, name: 'Science & Technology' },
+    { id: 5, name: 'Sports' },
+    { id: 6, name: 'Mathematics' },
+    { id: 7, name: 'Computer Science' },
+];
+
+
 export async function getMentorQuizzesForStudent(studentId: string): Promise<{ data: MentorQuiz[] | null; error: string | null }> {
   const supabase = createClient();
   
