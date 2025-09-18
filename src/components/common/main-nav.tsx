@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -14,6 +13,7 @@ import {
   CircleUser,
   LogOut,
   Users,
+  Bell,
 } from 'lucide-react';
 import type { User } from '@supabase/supabase-js';
 
@@ -49,6 +49,7 @@ function getInitials(name: string) {
 
 export function MainNav({ user, profile }: { user: User, profile: any }) {
   const pathname = usePathname();
+  const isMentor = profile?.role === 'mentor';
 
   const menuItems = [
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, exact: true },
@@ -58,8 +59,11 @@ export function MainNav({ user, profile }: { user: User, profile: any }) {
     { href: '/scholarships', label: 'Scholarships', icon: GraduationCap },
     { href: '/quiz', label: 'Quiz', icon: FileQuestion },
     { href: '/resources', label: 'Resources', icon: BookOpen },
-    { href: '/mentors', label: 'Find a Mentor', icon: Users },
+    { href: '/mentors', label: 'Find a Mentor', icon: Users, role: 'student' },
+    { href: '/requests', label: 'Student Requests', icon: Bell, role: 'mentor' },
   ];
+
+  const visibleMenuItems = menuItems.filter(item => !item.role || item.role === profile?.role);
 
   return (
     <>
@@ -109,7 +113,7 @@ export function MainNav({ user, profile }: { user: User, profile: any }) {
 
       </SidebarHeader>
       <SidebarMenu>
-        {menuItems.map((item) => (
+        {visibleMenuItems.map((item) => (
           <SidebarMenuItem key={item.href}>
             <SidebarMenuButton
               asChild

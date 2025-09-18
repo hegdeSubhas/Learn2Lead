@@ -4,7 +4,7 @@ import { getMentors } from '@/services/mentors';
 import { MentorCard } from './_components/mentor-card';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal } from 'lucide-react';
+import { Terminal, Users } from 'lucide-react';
 import { redirect } from 'next/navigation';
 
 export default async function MentorsPage() {
@@ -13,6 +13,24 @@ export default async function MentorsPage() {
 
   if (!user) {
     redirect('/login');
+  }
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+
+  if (profile?.role === 'mentor') {
+    return (
+        <div className="flex flex-col items-center justify-center text-center py-10">
+          <Users className="h-12 w-12 text-muted-foreground mb-4" />
+          <h1 className="text-2xl font-bold">This Page is for Students</h1>
+          <p className="text-muted-foreground mt-2">
+            As a mentor, you can manage student requests from your dashboard.
+          </p>
+        </div>
+    );
   }
 
   const { data: mentors, error } = await getMentors(user.id);
