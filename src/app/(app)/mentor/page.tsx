@@ -17,7 +17,7 @@ export default function MentorPage() {
           <CardTitle>Conversation</CardTitle>
           <CardDescription>Start the conversation by typing or using your voice.</CardDescription>
         </CardHeader>
-        <CardContent className="flex-grow flex flex-col">
+        <CardContent className="flex-grow flex flex-col p-0">
           <Chatbot />
         </CardContent>
       </Card>
