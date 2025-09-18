@@ -24,6 +24,7 @@ import { MentorDashboardContent } from './_components/mentor-dashboard-content';
 const features = [
   {
     title: 'AI Mentor',
+    assistantTitle: 'AI Assistant',
     description: 'Get personalized career guidance.',
     icon: Bot,
     href: '/mentor',
@@ -134,7 +135,7 @@ export default async function DashboardPage() {
             <Card className="h-full transition-all duration-300 group-hover:shadow-lg group-hover:-translate-y-1">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-xl font-headline">
-                  {feature.title}
+                  {userRole === 'mentor' && feature.assistantTitle ? feature.assistantTitle : feature.title}
                 </CardTitle>
                 <feature.icon className={`h-6 w-6 ${feature.color}`} />
               </CardHeader>
