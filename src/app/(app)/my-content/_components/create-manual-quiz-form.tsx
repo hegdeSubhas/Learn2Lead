@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Loader2, PlusCircle, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { createManualQuizAction } from '../actions';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -25,6 +25,7 @@ const questionSchema = z.object({
 
 const manualQuizSchema = z.object({
     title: z.string().min(3, "Title must be at least 3 characters."),
+    topic: z.string().min(3, "Topic must be at least 3 characters."),
     description: z.string().optional(),
     questions: z.array(questionSchema).min(1, "At least one question is required."),
 });
@@ -37,7 +38,7 @@ function SubmitButton({ isSubmitting }: { isSubmitting: boolean }) {
     return (
         <Button type="submit" disabled={disabled} className="w-full">
             {disabled && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Create Manual Quiz
+            Create Quiz
         </Button>
     )
 }
@@ -51,6 +52,7 @@ export function CreateManualQuizForm() {
         resolver: zodResolver(manualQuizSchema),
         defaultValues: {
             title: '',
+            topic: '',
             description: '',
             questions: [{ question: '', options: ['', '', '', ''], correctAnswer: '' }],
         },
@@ -67,6 +69,7 @@ export function CreateManualQuizForm() {
 
         const formData = new FormData();
         formData.append('title', data.title);
+        formData.append('topic', data.topic);
         formData.append('description', data.description || '');
         data.questions.forEach((q, qIndex) => {
             formData.append(`questions[${qIndex}].question`, q.question);
@@ -101,10 +104,17 @@ export function CreateManualQuizForm() {
                     <AlertDescription>{serverError}</AlertDescription>
                 </Alert>
             )}
-            <div className="space-y-2">
-                <Label htmlFor="title">Quiz Title</Label>
-                <Input id="title" {...form.register('title')} placeholder="e.g., Fundamentals of Algebra" />
-                {form.formState.errors.title && <p className="text-sm text-destructive">{form.formState.errors.title.message}</p>}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                    <Label htmlFor="title">Quiz Title</Label>
+                    <Input id="title" {...form.register('title')} placeholder="e.g., Fundamentals of Algebra" />
+                    {form.formState.errors.title && <p className="text-sm text-destructive">{form.formState.errors.title.message}</p>}
+                </div>
+                 <div className="space-y-2">
+                    <Label htmlFor="topic">Topic / Subject</Label>
+                    <Input id="topic" {...form.register('topic')} placeholder="e.g., Mathematics" />
+                    {form.formState.errors.topic && <p className="text-sm text-destructive">{form.formState.errors.topic.message}</p>}
+                </div>
             </div>
              <div className="space-y-2">
                 <Label htmlFor="description">Description (Optional)</Label>

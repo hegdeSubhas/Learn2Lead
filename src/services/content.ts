@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 export interface MentorQuiz {
   id: number;
   title: string;
+  topic: string | null;
   description: string | null;
   created_at: string;
   question_count: number;
@@ -14,7 +15,7 @@ export async function getMentorQuizzes(mentorId: string): Promise<{ data: Mentor
   
   const { data, error } = await supabase
     .from('mentor_quizzes')
-    .select('id, title, description, created_at, mentor_quiz_questions(count)')
+    .select('id, title, topic, description, created_at, mentor_quiz_questions(count)')
     .eq('mentor_id', mentorId)
     .order('created_at', { ascending: false });
 
