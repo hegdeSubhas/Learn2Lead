@@ -49,21 +49,20 @@ function getInitials(name: string) {
 
 export function MainNav({ user, profile }: { user: User, profile: any }) {
   const pathname = usePathname();
-  const isMentor = profile?.role === 'mentor';
 
-  const menuItems = [
-    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, exact: true },
-    { href: '/mentor', label: 'AI Mentor', icon: Bot },
-    { href: '/roadmap', label: 'Career Roadmap', icon: Lightbulb },
-    { href: '/jobs', label: 'Opportunities', icon: Briefcase },
-    { href: '/scholarships', label: 'Scholarships', icon: GraduationCap },
-    { href: '/quiz', label: 'Quiz', icon: FileQuestion },
-    { href: '/resources', label: 'Resources', icon: BookOpen },
-    { href: '/mentors', label: 'Find a Mentor', icon: Users, role: 'student' },
-    { href: '/requests', label: 'Student Requests', icon: Bell, role: 'mentor' },
+  const allMenuItems = [
+    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, exact: true, roles: ['student', 'mentor'] },
+    { href: '/mentor', label: 'AI Mentor', icon: Bot, roles: ['student', 'mentor'] },
+    { href: '/roadmap', label: 'Career Roadmap', icon: Lightbulb, roles: ['student'] },
+    { href: '/jobs', label: 'Opportunities', icon: Briefcase, roles: ['student'] },
+    { href: '/scholarships', label: 'Scholarships', icon: GraduationCap, roles: ['student'] },
+    { href: '/quiz', label: 'Quiz', icon: FileQuestion, roles: ['student'] },
+    { href: '/resources', label: 'Resources', icon: BookOpen, roles: ['student'] },
+    { href: '/mentors', label: 'Find a Mentor', icon: Users, roles: ['student'] },
+    { href: '/requests', label: 'Student Requests', icon: Bell, roles: ['mentor'] },
   ];
 
-  const visibleMenuItems = menuItems.filter(item => !item.role || item.role === profile?.role);
+  const visibleMenuItems = allMenuItems.filter(item => item.roles.includes(profile?.role));
 
   return (
     <>
