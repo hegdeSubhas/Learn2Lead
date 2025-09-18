@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -50,10 +51,11 @@ function getInitials(name: string) {
 
 export function MainNav({ user, profile }: { user: User, profile: any }) {
   const pathname = usePathname();
+  const userRole = profile?.role || 'student';
 
   const allMenuItems = [
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, exact: true, roles: ['student', 'mentor'] },
-    { href: '/mentor', label: 'AI Mentor', icon: Bot, roles: ['student', 'mentor'] },
+    { href: '/mentor', label: userRole === 'mentor' ? 'AI Assistant' : 'AI Mentor', icon: Bot, roles: ['student', 'mentor'] },
     { href: '/roadmap', label: 'Career Roadmap', icon: Lightbulb, roles: ['student'] },
     { href: '/jobs', label: 'Opportunities', icon: Briefcase, roles: ['student'] },
     { href: '/scholarships', label: 'Scholarships', icon: GraduationCap, roles: ['student'] },
@@ -64,7 +66,7 @@ export function MainNav({ user, profile }: { user: User, profile: any }) {
     { href: '/my-content', label: 'My Content', icon: Library, roles: ['mentor'] },
   ];
 
-  const visibleMenuItems = allMenuItems.filter(item => item.roles.includes(profile?.role));
+  const visibleMenuItems = allMenuItems.filter(item => item.roles.includes(userRole));
 
   return (
     <>

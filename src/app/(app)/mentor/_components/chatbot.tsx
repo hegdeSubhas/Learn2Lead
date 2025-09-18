@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef, useEffect, useActionState } from 'react';
@@ -22,9 +23,16 @@ function SubmitButton() {
   );
 }
 
-export function Chatbot() {
+export function Chatbot({ userRole = 'student' }: { userRole: string }) {
+  const getWelcomeMessage = () => {
+    if (userRole === 'mentor') {
+      return 'Hello! How can I assist you with your teaching today?';
+    }
+    return 'Hello! How can I help you today?';
+  };
+
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: 'Hello! How can I help you today?' },
+    { role: 'assistant', content: getWelcomeMessage() },
   ]);
   const [isTTSEnabled, setIsTTSEnabled] = useState(true);
   const [isListening, setIsListening] = useState(false);
@@ -42,7 +50,7 @@ export function Chatbot() {
       const recognition = new SpeechRecognition();
       recognition.continuous = false;
       recognition.interimResults = false;
-      recognition.lang = 'kn-IN';
+      recognition.lang = 'en-IN'; // Default to English
 
       recognition.onstart = () => setIsListening(true);
       recognition.onend = () => setIsListening(false);
@@ -65,8 +73,10 @@ export function Chatbot() {
 
   const speak = (text: string) => {
     if (typeof window !== 'undefined' && window.speechSynthesis) {
+      // Basic check for non-latin characters which might indicate Kannada
+      const isKannada = /[^\u0000-\u007f]/.test(text.substring(0, 100));
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'kn-IN'; // Set to Kannada
+      utterance.lang = isKannada ? 'kn-IN' : 'en-IN';
       window.speechSynthesis.cancel(); // Cancel any previous speech
       window.speechSynthesis.speak(utterance);
     }
