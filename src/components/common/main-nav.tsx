@@ -72,22 +72,13 @@ export function MainNav({ user, profile }: { user: User, profile: any }) {
                     </Avatar>
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-64" align="start" forceMount>
+            <DropdownMenuContent className="w-56" align="start" forceMount>
                 <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-2">
+                    <div className="flex flex-col space-y-1">
                         <p className="text-sm font-medium leading-none">{profile?.full_name || 'User'}</p>
                         <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
                     </div>
                 </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                 <div className="p-2 text-xs text-muted-foreground space-y-1">
-                    <p><strong>Phone:</strong> {profile?.phone || 'N/A'}</p>
-                    <p><strong>Age:</strong> {profile?.age || 'N/A'}</p>
-                    <p><strong>Education:</strong> {profile?.education || 'N/A'}</p>
-                    <p><strong>Skills:</strong> {profile?.skills || 'N/A'}</p>
-                    <p><strong>Hobbies:</strong> {profile?.hobbies || 'N/A'}</p>
-                    <p><strong>Goal:</strong> {profile?.ambition || 'N/A'}</p>
-                </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                     <Link href="/profile">
