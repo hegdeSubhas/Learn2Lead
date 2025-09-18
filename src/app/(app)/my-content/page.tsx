@@ -4,6 +4,26 @@ import { redirect } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { User, PlusCircle } from 'lucide-react';
 import { CreateManualQuizForm } from './_components/create-manual-quiz-form';
+import { MentorQuizList } from './_components/mentor-quiz-list';
+import { Suspense } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
+
+function QuizListSkeleton() {
+    return (
+        <div className="space-y-4">
+            {[...Array(2)].map((_, i) => (
+                <div key={i} className="border p-4 rounded-lg flex justify-between items-center">
+                    <div>
+                        <Skeleton className="h-6 w-48 mb-2" />
+                        <Skeleton className="h-4 w-64" />
+                    </div>
+                    <Skeleton className="h-10 w-24" />
+                </div>
+            ))}
+        </div>
+    )
+}
+
 
 export default async function MyContentPage() {
   const supabase = createClient();
@@ -40,7 +60,7 @@ export default async function MyContentPage() {
             </p>
         </div>
 
-        <div className="max-w-3xl mx-auto">
+        <div className="grid gap-8 lg:grid-cols-2">
              <Card>
                 <CardHeader>
                     <div className="flex items-center gap-2">
@@ -53,6 +73,20 @@ export default async function MyContentPage() {
                 </CardHeader>
                 <CardContent>
                     <CreateManualQuizForm />
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Your Created Quizzes</CardTitle>
+                    <CardDescription>
+                        Here you can view and manage the quizzes you have created.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Suspense fallback={<QuizListSkeleton />}>
+                        <MentorQuizList mentorId={user.id} />
+                    </Suspense>
                 </CardContent>
             </Card>
         </div>
