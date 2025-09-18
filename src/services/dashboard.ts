@@ -37,6 +37,7 @@ export async function getQuizzesForDashboard(studentId: string): Promise<{ data:
         return { data: [], error: null };
     }
 
+    // Check if a quiz submission exists for the user and quiz
     const { data: quizzes, error } = await supabase
         .from('mentor_quizzes')
         .select(`
