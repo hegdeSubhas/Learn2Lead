@@ -137,13 +137,15 @@ async function VideoResourcesList({ category }: { category: string }) {
             </div>
         )
     } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
         return (
              <Alert variant="destructive">
                 <Terminal className="h-4 w-4" />
                 <AlertTitle>Could Not Fetch Videos</AlertTitle>
                 <AlertDescription>
-                    <p>There was an error fetching the video resources. This might be because the YouTube API key is not configured or is invalid.</p>
-                    <p className="mt-2 text-xs">Please add your `YOUTUBE_API_KEY` to the `.env` file.</p>
+                    <p>There was an error fetching video resources.</p>
+                    <p className="mt-2 font-mono bg-muted p-2 rounded text-xs">{errorMessage}</p>
+                    <p className="mt-2 text-xs">This might be because the YouTube API key is not configured, is invalid, or has restrictions. Please check your `YOUTUBE_API_KEY` in the `.env` file and ensure the YouTube Data API v3 is enabled in your Google Cloud console.</p>
                 </AlertDescription>
             </Alert>
         )
