@@ -22,8 +22,8 @@ export async function getMentorQuizzes(mentorId: string): Promise<{ data: Mentor
         topic, 
         description, 
         created_at, 
-        questions:mentor_quiz_questions(count),
-        submissions:quiz_submissions(count)
+        mentor_quiz_questions(count),
+        quiz_submissions(count)
     `)
     .eq('mentor_id', mentorId)
     .order('created_at', { ascending: false });
@@ -36,9 +36,9 @@ export async function getMentorQuizzes(mentorId: string): Promise<{ data: Mentor
   const quizzes = data.map(q => ({
     ...q,
     // @ts-ignore
-    question_count: q.questions[0]?.count || 0,
+    question_count: q.mentor_quiz_questions[0]?.count || 0,
     // @ts-ignore
-    submission_count: q.submissions[0]?.count || 0,
+    submission_count: q.quiz_submissions[0]?.count || 0,
   }));
 
   return { data: quizzes, error: null };
@@ -98,3 +98,4 @@ export async function getQuizSubmissions(quizId: number, mentorId: string): Prom
 
     return { data: submissions, error: null, quizTitle: quizData.title };
 }
+
