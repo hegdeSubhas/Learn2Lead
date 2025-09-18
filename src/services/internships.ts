@@ -131,8 +131,8 @@ const MOCK_DATA: Internship[] = [
 
 
 export async function getInternships(category: string = 'internships'): Promise<Internship[]> {
-  const apiKey = process.env.RAPID_INTERNSHIP_API_KEY;
-  const apiHost = process.env.RAPID_INTERNSHIP_API_HOST;
+  const apiKey = process.env.RAPID_INTERNSHIP_API_KEY || '546a6234b6msh61e86f0d10a3a4fp14f793jsn27c9e00ed02d';
+  const apiHost = process.env.RAPID_INTERNSHIP_API_HOST || 'jsearch.p.rapidapi.com';
 
   if (!apiKey || !apiHost) {
     console.log("RAPID_INTERNSHIP_API_KEY or RAPID_INTERNSHIP_API_HOST is not set. Using mock data.");
@@ -145,7 +145,7 @@ export async function getInternships(category: string = 'internships'): Promise<
   }
   
   const query = `${category} in India`;
-  const url = `https://${apiHost}/?query=${encodeURIComponent(query)}&num_pages=1`;
+  const url = `https://${apiHost}/search?query=${encodeURIComponent(query)}&page=1&num_pages=1`;
   const options = {
     method: 'GET',
     headers: {
@@ -165,7 +165,11 @@ export async function getInternships(category: string = 'internships'): Promise<
 
     if (!result.data || !Array.isArray(result.data)) {
         console.warn("API response did not contain expected 'data' array. Using mock data.");
-        return MOCK_DATA;
+        return MOCK_DATA.filter(d => {
+            if (category === 'jobs') return d.type?.toLowerCase() === 'full-time';
+            if (category === 'internships') return d.type?.toLowerCase() === 'internship' || d.type?.toLowerCase() === 'part-time';
+            return true;
+        });
     }
 
     const internships: Internship[] = result.data.map((job: any) => {
