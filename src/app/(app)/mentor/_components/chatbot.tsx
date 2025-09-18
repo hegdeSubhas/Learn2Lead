@@ -35,6 +35,44 @@ export function Chatbot() {
   const initialState = { success: false, messages: messages };
   const [state, formAction] = useActionState(getGuidanceAction, initialState);
 
+  // Set up speech recognition on the client
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'kn-IN';
+
+      recognition.onstart = () => setIsListening(true);
+      recognition.onend = () => setIsListening(false);
+      recognition.onerror = (event: any) => {
+        if (event.error !== 'no-speech') {
+          console.error('Speech recognition error:', event.error);
+        }
+        setIsListening(false);
+      };
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        if (inputRef.current) {
+          inputRef.current.value = transcript;
+          inputRef.current.form?.requestSubmit();
+        }
+      };
+      recognitionRef.current = recognition;
+    }
+  }, []);
+
+  const speak = (text: string) => {
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'kn-IN'; // Set to Kannada
+      window.speechSynthesis.cancel(); // Cancel any previous speech
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
+
   // Effect to handle state updates from the server action
   useEffect(() => {
     if (state?.messages && state.messages.length > messages.length) {
@@ -58,18 +96,9 @@ export function Chatbot() {
   }, [messages]);
 
 
-  const speak = (text: string) => {
-    if (typeof window !== 'undefined' && window.speechSynthesis) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'kn-IN'; // Set to Kannada
-      window.speechSynthesis.cancel(); // Cancel any previous speech
-      window.speechSynthesis.speak(utterance);
-    }
-  };
-
   const handleToggleTTS = () => {
     setIsTTSEnabled(prev => {
-      if (!prev === false) {
+      if (!prev === false && typeof window !== 'undefined' && window.speechSynthesis) {
         window.speechSynthesis.cancel();
       }
       return !prev;
@@ -77,49 +106,16 @@ export function Chatbot() {
   };
 
   const handleVoiceInput = () => {
+    if (!recognitionRef.current) {
+        alert('Speech recognition is not supported in this browser.');
+        return;
+    }
+
     if (isListening) {
       recognitionRef.current?.stop();
-      setIsListening(false);
-      return;
+    } else {
+      recognitionRef.current?.start();
     }
-
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      alert('Speech recognition is not supported in this browser.');
-      return;
-    }
-
-    const recognition = new SpeechRecognition();
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.lang = 'kn-IN'; // Set to Kannada
-
-    recognition.onstart = () => {
-      setIsListening(true);
-    };
-
-    recognition.onend = () => {
-      setIsListening(false);
-    };
-
-    recognition.onerror = (event: any) => {
-      if (event.error !== 'no-speech') {
-        console.error('Speech recognition error:', event.error);
-      }
-      setIsListening(false);
-    };
-
-    recognition.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript;
-      if (inputRef.current) {
-        inputRef.current.value = transcript;
-        // The form must be submitted programmatically
-        inputRef.current.form?.requestSubmit();
-      }
-    };
-
-    recognitionRef.current = recognition;
-    recognition.start();
   };
 
   return (
