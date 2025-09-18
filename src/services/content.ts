@@ -14,34 +14,16 @@ export interface MentorQuiz {
 export async function getMentorQuizzes(mentorId: string): Promise<{ data: MentorQuiz[] | null; error: string | null }> {
   const supabase = createClient();
   
-  const { data, error } = await supabase
-    .from('mentor_quizzes')
-    .select(`
-        id, 
-        title, 
-        topic, 
-        description, 
-        created_at, 
-        mentor_quiz_questions(count),
-        quiz_submissions(count)
-    `)
-    .eq('mentor_id', mentorId)
-    .order('created_at', { ascending: false });
+  const { data, error } = await supabase.rpc('get_mentor_quizzes_with_counts', {
+    p_mentor_id: mentorId
+  });
 
   if (error) {
     console.error("Error fetching mentor quizzes:", error);
     return { data: null, error: "Failed to fetch your created quizzes." };
   }
   
-  const quizzes = data.map(q => ({
-    ...q,
-    // @ts-ignore
-    question_count: q.mentor_quiz_questions[0]?.count || 0,
-    // @ts-ignore
-    submission_count: q.quiz_submissions[0]?.count || 0,
-  }));
-
-  return { data: quizzes, error: null };
+  return { data, error: null };
 }
 
 
@@ -98,4 +80,3 @@ export async function getQuizSubmissions(quizId: number, mentorId: string): Prom
 
     return { data: submissions, error: null, quizTitle: quizData.title };
 }
-
