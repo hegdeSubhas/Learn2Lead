@@ -13,7 +13,7 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateJobRoadmapInputSchema = z.object({
-  jobRoles: z.array(z.string()).describe('The specific job roles for which to generate a roadmap.'),
+  jobRoles: z.array(z.string()).describe('The specific job roles for which to generate a roadmap. This may include abbreviations or typos.'),
   interests: z.string().describe('The interests of the student to tailor the roadmap.'),
 });
 export type GenerateJobRoadmapInput = z.infer<typeof GenerateJobRoadmapInputSchema>;
@@ -36,7 +36,9 @@ const prompt = ai.definePrompt({
 
 You will be given one or more target job roles and the student's personal interests.
 
-Generate a combined roadmap for the following job roles: {{#each jobRoles}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}.
+First, interpret the user's input for job roles. It may contain abbreviations, typos, or variations (e.g., 'ai' for 'Artificial Intelligence', 'ML' for 'Machine Learning', 'frontend dev' for 'Frontend Developer'). Identify the most likely, standard job titles from the input.
+
+Generate a combined roadmap for the interpreted job roles based on this input: {{#each jobRoles}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}.
 
 The roadmap must be tailored to the student's specific interests: {{{interests}}}.
 
