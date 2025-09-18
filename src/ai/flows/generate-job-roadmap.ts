@@ -36,7 +36,7 @@ const prompt = ai.definePrompt({
 
 You will be given one or more target job roles and the student's personal interests.
 
-First, interpret the user's input for job roles. It may contain abbreviations, typos, or variations (e.g., 'ai' for 'Artificial Intelligence', 'ML' for 'Machine Learning', 'frontend dev' for 'Frontend Developer'). Identify the most likely, standard job titles from the input.
+First, interpret the user's input for job roles in a case-insensitive manner. The input may contain abbreviations, typos, or variations (e.g., 'ai' or 'A.I.' for 'Artificial Intelligence', 'ML' for 'Machine Learning', 'frontend dev' for 'Frontend Developer'). Identify the most likely, standard job titles from the input before proceeding.
 
 Generate a combined roadmap for the interpreted job roles based on this input: {{#each jobRoles}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}.
 
