@@ -144,7 +144,12 @@ export async function getInternships(category: string = 'internships'): Promise<
     return filteredMock;
   }
   
-  const query = `${category} in India`;
+  let queryTerm = "Developer";
+  if (category === 'internships') {
+    queryTerm = 'Intern';
+  }
+  
+  const query = `"${queryTerm}" in India`;
   const url = `https://${apiHost}/search?query=${encodeURIComponent(query)}&page=1&num_pages=1`;
   const options = {
     method: 'GET',
