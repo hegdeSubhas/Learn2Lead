@@ -94,14 +94,6 @@ export async function signupAction(
   if (profileError) {
       console.error("Profile insertion error:", profileError);
 
-      // Check for the specific "column not found" error
-      if (profileError.code === '42703' || (profileError.message && profileError.message.includes('column "role" of relation "profiles" does not exist'))) {
-        return {
-          success: false,
-          message: "Database schema is out of date. The 'role' column is missing from the 'profiles' table. Please run the required SQL script in your Supabase dashboard's SQL Editor to add it."
-        }
-      }
-
        // If profile insertion fails for another reason, we must clean up the created user
        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
        const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -110,22 +102,35 @@ export async function signupAction(
        console.log('Attempting cleanup with service role key:', serviceRoleKey ? 'Key Found' : 'Key NOT Found');
 
        if (!supabaseUrl || !serviceRoleKey) {
-            return { success: false, message: "Could not save profile and cleanup failed due to missing server environment variables." };
+            return { 
+                success: false, 
+                message: `Could not save profile information. The server is missing the 'SUPABASE_SERVICE_ROLE_KEY' which is required to clean up the failed registration. Please set it in your .env file and manually delete the user with email '${email}' from the Supabase Auth dashboard before trying again.`
+            };
        }
-       
-       // THIS REQUIRES a special client that uses the SERVICE_ROLE_KEY
-       const { createClient: createAdminClient } = await import('@supabase/supabase-js');
-       const supabaseAdmin = createAdminClient(supabaseUrl, serviceRoleKey, {
-         auth: {
-           autoRefreshToken: false,
-           persistSession: false
-         }
-       });
+
+      // THIS REQUIRES a special client that uses the SERVICE_ROLE_KEY
+      const { createClient: createAdminClient } = await import('@supabase/supabase-js');
+      const supabaseAdmin = createAdminClient(supabaseUrl, serviceRoleKey, {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      });
 
       const { data: adminData, error: adminError } = await supabaseAdmin.auth.admin.deleteUser(authData.user.id)
+      
       if (adminError) {
         return { success: false, message: `Could not save profile and failed to clean up user: ${adminError.message}. Please contact support.` };
       }
+
+       // Check for the specific "column not found" error
+      if (profileError.code === '42703' || (profileError.message && profileError.message.includes('column "role" of relation "profiles" does not exist'))) {
+        return {
+          success: false,
+          message: "Database schema is out of date. The 'role' column is missing from the 'profiles' table. Please run the required SQL script in your Supabase dashboard's SQL Editor to add it."
+        }
+      }
+      
        return { success: false, message: `Could not save profile: ${profileError.message}` };
   }
 
