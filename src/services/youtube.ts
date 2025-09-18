@@ -1,4 +1,5 @@
 
+
 export interface YouTubeVideo {
     videoId: string;
     title: string;
@@ -67,7 +68,7 @@ export async function getYoutubeVideos(category: string = "general"): Promise<Yo
             title: item.snippet.title,
             description: item.snippet.description,
             channelTitle: item.snippet.channelTitle,
-            thumbnail: item.snippet.thumbnails.high.url,
+            thumbnail: item.snippet.thumbnails.default.url,
         }));
 
     } catch (error) {
