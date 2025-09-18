@@ -70,13 +70,17 @@ export async function getQuizSubmissions(quizId: number, mentorId: string): Prom
         return { data: null, error: "Failed to fetch submissions.", quizTitle: quizData.title };
     }
 
-    const submissions = data.map(s => ({
-        id: s.id,
-        score: s.score,
-        submitted_at: s.submitted_at,
-        // @ts-ignore
-        student_name: s.student?.full_name || 'Anonymous'
-    }));
+    const submissions = data.map(s => {
+        // The student profile can be null or an array depending on the relationship.
+        // This defensive code handles both cases.
+        const profile = Array.isArray(s.student) ? s.student[0] : s.student;
+        return {
+            id: s.id,
+            score: s.score,
+            submitted_at: s.submitted_at,
+            student_name: profile?.full_name || 'Anonymous'
+        };
+    });
 
     return { data: submissions, error: null, quizTitle: quizData.title };
 }
@@ -85,19 +89,13 @@ export interface Announcement {
     id: number;
     content: string;
     created_at: string;
-    mentor_name: string | null;
 }
 
 export async function getMentorAnnouncements(mentorId: string): Promise<{ data: Announcement[] | null; error: string | null }> {
     const supabase = createClient();
     const { data, error } = await supabase
         .from('announcements')
-        .select(`
-            id,
-            content,
-            created_at,
-            mentor:profiles (full_name)
-        `)
+        .select('id, content, created_at')
         .eq('mentor_id', mentorId)
         .order('created_at', { ascending: false });
 
@@ -106,13 +104,5 @@ export async function getMentorAnnouncements(mentorId: string): Promise<{ data: 
         return { data: null, error: "Failed to fetch announcements." };
     }
     
-    const announcements = data.map(a => ({
-        id: a.id,
-        content: a.content,
-        created_at: a.created_at,
-        // @ts-ignore
-        mentor_name: a.mentor?.full_name || 'Mentor'
-    }));
-
-    return { data: announcements, error: null };
+    return { data, error: null };
 }
