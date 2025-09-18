@@ -13,9 +13,13 @@ import {
   Lightbulb,
   BookOpen,
   ArrowRight,
+  Users,
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { createClient } from '@/lib/supabase/server';
+import { StudentDashboardContent } from './_components/student-dashboard-content';
+import { MentorDashboardContent } from './_components/mentor-dashboard-content';
 
 const features = [
   {
@@ -24,6 +28,7 @@ const features = [
     icon: Bot,
     href: '/mentor',
     color: 'text-blue-500',
+    roles: ['student', 'mentor']
   },
   {
     title: 'Career Roadmap',
@@ -31,6 +36,7 @@ const features = [
     icon: Lightbulb,
     href: '/roadmap',
     color: 'text-green-500',
+    roles: ['student']
   },
   {
     title: 'Opportunities',
@@ -38,6 +44,7 @@ const features = [
     icon: Briefcase,
     href: '/jobs',
     color: 'text-purple-500',
+     roles: ['student']
   },
   {
     title: 'Scholarships',
@@ -45,6 +52,7 @@ const features = [
     icon: GraduationCap,
     href: '/scholarships',
     color: 'text-yellow-500',
+     roles: ['student']
   },
   {
     title: 'Self-Evaluation Quiz',
@@ -52,6 +60,7 @@ const features = [
     icon: FileQuestion,
     href: '/quiz',
     color: 'text-red-500',
+     roles: ['student']
   },
   {
     title: 'Learning Resources',
@@ -59,10 +68,31 @@ const features = [
     icon: BookOpen,
     href: '/resources',
     color: 'text-indigo-500',
+     roles: ['student']
   },
+  {
+    title: 'Find a Mentor',
+    description: 'Connect with experienced professionals.',
+    icon: Users,
+    href: '/mentors',
+    color: 'text-pink-500',
+    roles: ['student']
+  }
 ];
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return null;
+  }
+  
+  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+
+  const userRole = profile?.role || 'student';
+  const visibleFeatures = features.filter(f => f.roles.includes(userRole));
+
   return (
     <div className="space-y-8">
       <Card className="border-0 shadow-none">
@@ -78,7 +108,7 @@ export default function DashboardPage() {
         <CardContent>
           <div className="relative h-60 w-full rounded-lg overflow-hidden">
              <Image
-                src="https://picsum.photos/1200/400"
+                src="https://picsum.photos/seed/dashboard/1200/400"
                 alt="Students collaborating"
                 fill
                 className="object-cover"
@@ -92,16 +122,21 @@ export default function DashboardPage() {
           </div>
         </CardContent>
       </Card>
+      
+      {/* Role-specific content */}
+      {userRole === 'student' && <StudentDashboardContent userId={user.id} />}
+      {userRole === 'mentor' && <MentorDashboardContent />}
+
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {features.map((feature) => (
+        {visibleFeatures.map((feature) => (
           <Link href={feature.href} key={feature.href} className="group">
             <Card className="h-full transition-all duration-300 group-hover:shadow-lg group-hover:-translate-y-1">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-xl font-headline">
                   {feature.title}
                 </CardTitle>
-                <feature.icon className="h-6 w-6 text-muted-foreground" />
+                <feature.icon className={`h-6 w-6 ${feature.color}`} />
               </CardHeader>
               <CardContent>
                 <CardDescription>{feature.description}</CardDescription>

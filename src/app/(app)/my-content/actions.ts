@@ -69,7 +69,6 @@ export async function createManualQuizAction(
 
     const { title, description, topic, questions } = validatedFields.data;
 
-    // Insert quiz and questions within a transaction
     const { error } = await supabase.rpc('create_quiz_with_questions', {
         p_mentor_id: user.id,
         p_quiz_title: title,
@@ -88,5 +87,49 @@ export async function createManualQuizAction(
     }
 
     revalidatePath('/my-content');
+    revalidatePath('/dashboard');
     return { success: true, message: "Manual quiz created successfully!" };
+}
+
+const announcementSchema = z.object({
+    content: z.string().min(10, "Announcement must be at least 10 characters.").max(500, "Announcement cannot exceed 500 characters."),
+});
+
+export type AnnouncementState = {
+    success: boolean;
+    message: string;
+};
+
+export async function createAnnouncementAction(
+    prevState: AnnouncementState,
+    formData: FormData
+): Promise<AnnouncementState> {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+        return { success: false, message: "You must be logged in to post an announcement." };
+    }
+
+    const validatedFields = announcementSchema.safeParse({
+        content: formData.get("content"),
+    });
+
+    if (!validatedFields.success) {
+        return { success: false, message: validatedFields.error.flatten().fieldErrors.content?.[0] || "Invalid input." };
+    }
+
+    const { error } = await supabase.from('announcements').insert({
+        mentor_id: user.id,
+        content: validatedFields.data.content,
+    });
+
+    if (error) {
+        console.error("Error creating announcement:", error);
+        return { success: false, message: `Database error: ${error.message}` };
+    }
+
+    revalidatePath('/my-content');
+    revalidatePath('/dashboard');
+    return { success: true, message: "Announcement posted successfully!" };
 }

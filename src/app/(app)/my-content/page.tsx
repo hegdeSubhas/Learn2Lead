@@ -2,13 +2,15 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { User, PlusCircle } from 'lucide-react';
+import { User, PlusCircle, Megaphone } from 'lucide-react';
 import { CreateManualQuizForm } from './_components/create-manual-quiz-form';
 import { MentorQuizList } from './_components/mentor-quiz-list';
 import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { CreateAnnouncementForm } from './_components/create-announcement-form';
+import { MentorAnnouncementList } from './_components/mentor-announcement-list';
 
-function QuizListSkeleton() {
+function ListSkeleton() {
     return (
         <div className="space-y-4">
             {[...Array(2)].map((_, i) => (
@@ -60,35 +62,66 @@ export default async function MyContentPage() {
             </p>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-2">
-             <Card>
-                <CardHeader>
-                    <div className="flex items-center gap-2">
-                         <PlusCircle className="h-6 w-6" />
-                        <CardTitle>Create a New Quiz</CardTitle>
-                    </div>
-                    <CardDescription>
-                        Build your own quiz by writing the questions and options yourself.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <CreateManualQuizForm />
-                </CardContent>
-            </Card>
+        <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
+            <div className="grid gap-8">
+                <Card>
+                    <CardHeader>
+                        <div className="flex items-center gap-2">
+                            <PlusCircle className="h-6 w-6" />
+                            <CardTitle>Create a New Quiz</CardTitle>
+                        </div>
+                        <CardDescription>
+                            Build a quiz by writing the questions and options yourself.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <CreateManualQuizForm />
+                    </CardContent>
+                </Card>
+                 <Card>
+                    <CardHeader>
+                        <div className="flex items-center gap-2">
+                            <Megaphone className="h-6 w-6" />
+                            <CardTitle>Create an Announcement</CardTitle>
+                        </div>
+                        <CardDescription>
+                           Post an update for all of your connected students.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <CreateAnnouncementForm />
+                    </CardContent>
+                </Card>
+            </div>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>Your Created Quizzes</CardTitle>
-                    <CardDescription>
-                        Here you can view and manage the quizzes you have created.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Suspense fallback={<QuizListSkeleton />}>
-                        <MentorQuizList mentorId={user.id} />
-                    </Suspense>
-                </CardContent>
-            </Card>
+            <div className="grid gap-8">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Your Created Quizzes</CardTitle>
+                        <CardDescription>
+                            View and manage the quizzes you have created.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Suspense fallback={<ListSkeleton />}>
+                            <MentorQuizList mentorId={user.id} />
+                        </Suspense>
+                    </CardContent>
+                </Card>
+                 <Card>
+                    <CardHeader>
+                        <CardTitle>Your Past Announcements</CardTitle>
+                        <CardDescription>
+                            A history of announcements you have posted.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                         <Suspense fallback={<ListSkeleton />}>
+                            <MentorAnnouncementList mentorId={user.id} />
+                        </Suspense>
+                    </CardContent>
+                </Card>
+            </div>
         </div>
     </div>
   );

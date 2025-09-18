@@ -80,3 +80,39 @@ export async function getQuizSubmissions(quizId: number, mentorId: string): Prom
 
     return { data: submissions, error: null, quizTitle: quizData.title };
 }
+
+export interface Announcement {
+    id: number;
+    content: string;
+    created_at: string;
+    mentor_name: string | null;
+}
+
+export async function getMentorAnnouncements(mentorId: string): Promise<{ data: Announcement[] | null; error: string | null }> {
+    const supabase = createClient();
+    const { data, error } = await supabase
+        .from('announcements')
+        .select(`
+            id,
+            content,
+            created_at,
+            mentor:profiles (full_name)
+        `)
+        .eq('mentor_id', mentorId)
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error("Error fetching announcements:", error);
+        return { data: null, error: "Failed to fetch announcements." };
+    }
+    
+    const announcements = data.map(a => ({
+        id: a.id,
+        content: a.content,
+        created_at: a.created_at,
+        // @ts-ignore
+        mentor_name: a.mentor?.full_name || 'Mentor'
+    }));
+
+    return { data: announcements, error: null };
+}
