@@ -1,4 +1,5 @@
 
+
 import { createClient } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
 
@@ -9,7 +10,6 @@ export interface MentorProfile {
   skills: string | null;
   ambition: string | null;
   phone: string | null;
-  email: string | null;
 }
 
 export interface MentorWithRequest extends MentorProfile {
@@ -20,7 +20,7 @@ export async function getMentors(studentId: string): Promise<{ data: MentorWithR
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
   
-  // 1. Fetch all profiles with the 'mentor' role and their auth email
+  // 1. Fetch all profiles with the 'mentor' role
   const { data: mentors, error: mentorsError } = await supabase
     .from('profiles')
     .select(`
@@ -29,8 +29,7 @@ export async function getMentors(studentId: string): Promise<{ data: MentorWithR
       education, 
       skills, 
       ambition, 
-      phone,
-      user_email:users(email)
+      phone
     `)
     .eq('role', 'mentor');
 
@@ -67,12 +66,8 @@ export async function getMentors(studentId: string): Promise<{ data: MentorWithR
 
   // 4. Combine the mentor profiles with their request status
   const mentorsWithStatus: MentorWithRequest[] = mentors.map(mentor => {
-    // @ts-ignore
-    const email = mentor.user_email?.email || null;
-    const { user_email, ...rest } = mentor;
     return {
-      ...rest,
-      email: email,
+      ...mentor,
       request_status: requestStatusMap.get(mentor.id) || null,
     };
   });

@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useActionState } from 'react';
@@ -108,19 +109,13 @@ export function MentorCard({ mentor }: { mentor: MentorWithRequest }) {
            <div>
             <h4 className="text-sm font-semibold mb-2">Contact Information</h4>
             <div className="space-y-2 text-sm text-muted-foreground">
-                {mentor.email && (
-                    <a href={`mailto:${mentor.email}`} className="flex items-center gap-2 hover:text-primary">
-                       <Mail size={14}/>
-                       <span>{mentor.email}</span>
-                    </a>
-                )}
                 {mentor.phone && (
                     <a href={`tel:${mentor.phone}`} className="flex items-center gap-2 hover:text-primary">
                         <Phone size={14} />
                         <span>{mentor.phone}</span>
                     </a>
                 )}
-                 {!mentor.email && !mentor.phone && (
+                 {!mentor.phone && (
                     <p>No contact information provided.</p>
                 )}
             </div>
