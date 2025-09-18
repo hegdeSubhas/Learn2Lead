@@ -1,53 +1,132 @@
-export interface QuizQuestion {
-  type: string;
-  difficulty: string;
-  category: string;
-  question: string;
-  correct_answer: string;
-  incorrect_answers: string[];
+
+import { createClient } from "@/lib/supabase/server";
+
+export type MentorQuiz = {
+  id: number;
+  title: string;
+  topic: string | null;
+  mentor_name: string | null;
 }
 
-export const quizCategories = [
-    { id: 9, name: "General Knowledge" },
-    { id: 10, name: "Entertainment: Books" },
-    { id: 11, name: "Entertainment: Film" },
-    { id: 12, name: "Entertainment: Music" },
-    { id: 14, name: "Entertainment: Television" },
-    { id: 15, name: "Entertainment: Video Games" },
-    { id: 16, name: "Entertainment: Board Games" },
-    { id: 17, name: "Science & Nature" },
-    { id: 18, name: "Science: Computers" },
-    { id: 19, name: "Science: Mathematics" },
-    { id: 20, name: "Mythology" },
-    { id: 21, name: "Sports" },
-    { id: 22, name: "Geography" },
-    { id: 23, name: "History" },
-    { id: 24, name: "Politics" },
-    { id: 25, name: "Art" },
-    { id: 26, name: "Celebrities" },
-    { id: 27, name: "Animals" },
-    { id: 28, name: "Vehicles" },
-];
+export async function getMentorQuizzesForStudent(studentId: string): Promise<{ data: MentorQuiz[] | null; error: string | null }> {
+  const supabase = createClient();
+  
+  // Find mentors the student is connected to (status = 'accepted')
+  const { data: requests, error: requestError } = await supabase
+    .from('mentor_requests')
+    .select('mentor_id')
+    .eq('student_id', studentId)
+    .eq('status', 'accepted');
 
-
-export async function getQuizQuestionsFromApi(categoryId: number, amount: number = 10, type: string = 'multiple'): Promise<QuizQuestion[]> {
-  const url = `https://opentdb.com/api.php?amount=${amount}&category=${categoryId}&type=${type}`;
-
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`API call failed with status: ${response.status}`);
-    }
-    const data = await response.json();
-
-    if (data.response_code !== 0) {
-      throw new Error(`API returned response code: ${data.response_code}`);
-    }
-    
-    return data.results as QuizQuestion[];
-
-  } catch (error) {
-    console.error("Error fetching quiz questions:", error);
-    throw error;
+  if (requestError) {
+    console.error("Error fetching mentor connections:", requestError);
+    return { data: null, error: "Failed to fetch mentor connections." };
   }
+
+  if (!requests || requests.length === 0) {
+    return { data: [], error: null }; // No connected mentors
+  }
+
+  const mentorIds = requests.map(r => r.mentor_id);
+
+  // Fetch quizzes from those mentors
+  const { data: quizzes, error: quizError } = await supabase
+    .from('mentor_quizzes')
+    .select(`
+        id, 
+        title, 
+        topic,
+        mentor:profiles!mentor_quizzes_mentor_id_fkey (
+            full_name
+        )
+    `)
+    .in('mentor_id', mentorIds);
+  
+  if (quizError) {
+    console.error("Error fetching mentor quizzes:", quizError);
+    return { data: null, error: "Failed to fetch quizzes from your mentors." };
+  }
+
+  const formattedQuizzes = quizzes?.map(q => ({
+    id: q.id,
+    title: q.title,
+    topic: q.topic,
+    // @ts-ignore
+    mentor_name: q.mentor?.full_name || 'N/A'
+  })) || [];
+
+  return { data: formattedQuizzes, error: null };
+}
+
+export type QuizQuestion = {
+    id: number;
+    question: string;
+    options: string[];
+    correct_answer: string;
+};
+
+export type QuizWithQuestions = {
+    id: number;
+    title: string;
+    description: string | null;
+    topic: string | null;
+    questions: QuizQuestion[];
+};
+
+
+export async function getQuizForStudent(quizId: number, studentId: string): Promise<{ data: QuizWithQuestions | null; error: string | null }> {
+    const supabase = createClient();
+
+    // First, verify the student has access to this quiz through an accepted mentor
+    const { data: quizMeta, error: metaError } = await supabase
+        .from('mentor_quizzes')
+        .select('id, mentor_id')
+        .eq('id', quizId)
+        .single();
+    
+    if (metaError || !quizMeta) {
+        return { data: null, error: "Quiz not found." };
+    }
+
+    const { count, error: accessError } = await supabase
+        .from('mentor_requests')
+        .select('*', { count: 'exact', head: true })
+        .eq('student_id', studentId)
+        .eq('mentor_id', quizMeta.mentor_id)
+        .eq('status', 'accepted');
+
+    if (accessError || count === 0) {
+        return { data: null, error: "You do not have permission to take this quiz." };
+    }
+
+    // Now fetch the full quiz data
+    const { data, error } = await supabase
+        .from('mentor_quizzes')
+        .select(`
+            id,
+            title,
+            description,
+            topic,
+            questions:mentor_quiz_questions (
+                id,
+                question,
+                options,
+                correct_answer
+            )
+        `)
+        .eq('id', quizId)
+        .single();
+
+    if (error) {
+        console.error("Error fetching quiz with questions:", error);
+        return { data: null, error: "Failed to load the quiz details." };
+    }
+
+    // Supabase returns 'options' as a JSON string, so we need to parse it
+    const formattedQuestions = data.questions.map(q => ({
+        ...q,
+        options: Array.isArray(q.options) ? q.options : JSON.parse(q.options || '[]')
+    }));
+
+    return { data: { ...data, questions: formattedQuestions }, error: null };
 }
