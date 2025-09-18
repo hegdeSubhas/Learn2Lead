@@ -13,6 +13,7 @@ import {
   BookOpen,
   CircleUser,
   LogOut,
+  Users,
 } from 'lucide-react';
 import type { User } from '@supabase/supabase-js';
 
@@ -57,6 +58,7 @@ export function MainNav({ user, profile }: { user: User, profile: any }) {
     { href: '/scholarships', label: 'Scholarships', icon: GraduationCap },
     { href: '/quiz', label: 'Quiz', icon: FileQuestion },
     { href: '/resources', label: 'Resources', icon: BookOpen },
+    { href: '/mentors', label: 'Find a Mentor', icon: Users },
   ];
 
   return (
