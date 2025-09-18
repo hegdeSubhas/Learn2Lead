@@ -2,35 +2,8 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Library, Terminal, User, PlusCircle } from 'lucide-react';
-import { getMentorQuizzes, type MentorQuiz } from '@/services/content';
+import { User, PlusCircle } from 'lucide-react';
 import { CreateManualQuizForm } from './_components/create-manual-quiz-form';
-
-async function QuizList({ quizzes }: { quizzes: MentorQuiz[] }) {
-    if (quizzes.length === 0) {
-        return <p className="text-sm text-muted-foreground text-center py-8">You haven't created any quizzes yet.</p>
-    }
-    return (
-        <div className="space-y-4">
-            {quizzes.map(quiz => (
-                <div key={quiz.id} className="border p-4 rounded-lg">
-                    <div className="flex justify-between items-start">
-                        <div>
-                            <h3 className="font-semibold">{quiz.title}</h3>
-                            {quiz.topic && <p className="text-sm text-primary font-medium">{quiz.topic}</p>}
-                        </div>
-                         <p className="text-xs text-muted-foreground">{new Date(quiz.created_at).toLocaleDateString()}</p>
-                    </div>
-                    {quiz.description && <p className="text-sm text-muted-foreground mt-1">{quiz.description}</p>}
-                    <div className="flex justify-between items-center mt-2">
-                        <p className="text-xs text-muted-foreground">{quiz.question_count} questions</p>
-                    </div>
-                </div>
-            ))}
-        </div>
-    )
-}
 
 export default async function MyContentPage() {
   const supabase = createClient();
@@ -58,8 +31,6 @@ export default async function MyContentPage() {
     );
   }
 
-  const { data: quizzes, error } = await getMentorQuizzes(user.id);
-
   return (
     <div className="space-y-8">
         <div className="text-center">
@@ -69,7 +40,7 @@ export default async function MyContentPage() {
             </p>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
+        <div className="max-w-3xl mx-auto">
              <Card>
                 <CardHeader>
                     <div className="flex items-center gap-2">
@@ -82,29 +53,6 @@ export default async function MyContentPage() {
                 </CardHeader>
                 <CardContent>
                     <CreateManualQuizForm />
-                </CardContent>
-            </Card>
-
-
-            <Card>
-                <CardHeader>
-                    <div className="flex items-center gap-2">
-                        <Library className="h-6 w-6" />
-                        <CardTitle>Your Created Quizzes</CardTitle>
-                    </div>
-                    <CardDescription>
-                        A list of all the quizzes you have created.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    {error && (
-                        <Alert variant="destructive">
-                            <Terminal className="h-4 w-4" />
-                            <AlertTitle>Error</AlertTitle>
-                            <AlertDescription>{error}</AlertDescription>
-                        </Alert>
-                    )}
-                    {quizzes && <QuizList quizzes={quizzes} />}
                 </CardContent>
             </Card>
         </div>
