@@ -9,6 +9,7 @@ const signupSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   email: z.string().email("Invalid email address."),
   password: z.string().min(6, "Password must be at least 6 characters."),
+  role: z.enum(['student', 'mentor']),
   phone: z.string().optional(),
   age: z.coerce.number().optional(),
   education: z.string().optional(),
@@ -42,6 +43,7 @@ export async function signupAction(
       name,
       email,
       password,
+      role,
       phone,
       age,
       education,
@@ -59,6 +61,7 @@ export async function signupAction(
       options: {
         data: {
           full_name: name,
+          role: role,
         }
       }
   });
@@ -77,6 +80,7 @@ export async function signupAction(
     .insert({ 
       id: authData.user.id,
       full_name: name,
+      role,
       phone,
       age,
       education,
@@ -94,7 +98,7 @@ export async function signupAction(
       if (profileError.code === '42P01') {
         return {
           success: false,
-          message: "Database setup is incomplete. The 'profiles' table was not found. Please run the required SQL script in your Supabase dashboard's SQL Editor."
+          message: "Database setup is incomplete. The 'profiles' table was not found or the 'role' column is missing. Please run the required SQL script in your Supabase dashboard's SQL Editor."
         }
       }
 

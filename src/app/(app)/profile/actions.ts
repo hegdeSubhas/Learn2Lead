@@ -60,7 +60,7 @@ export async function updateUserAction(
   }
 
   revalidatePath('/(app)/layout', 'layout');
-  revalidatePath('/profile');
+  revalidatePath('/(app)/profile');
   
   return { 
       success: true,

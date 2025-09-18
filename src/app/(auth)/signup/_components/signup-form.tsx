@@ -10,6 +10,7 @@ import { Loader2, Terminal } from "lucide-react";
 import { signupAction } from "../actions";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useRouter } from "next/navigation";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 function SubmitButton() {
     const { pending } = useFormStatus();
@@ -28,7 +29,6 @@ export function SignupForm() {
 
     useEffect(() => {
         if (state.success) {
-            // Redirect to dashboard on successful signup
             router.push('/dashboard');
         }
     }, [state.success, router]);
@@ -36,13 +36,28 @@ export function SignupForm() {
 
     return (
         <form action={formAction} className="space-y-4">
-             {state?.message && (
-                <Alert variant={state.success ? "default" : "destructive"}>
+             {state?.message && !state.success && (
+                <Alert variant={"destructive"}>
                     <Terminal className="h-4 w-4" />
-                    <AlertTitle>{state.success ? "Success" : "Error"}</AlertTitle>
+                    <AlertTitle>Error</AlertTitle>
                     <AlertDescription>{state.message}</AlertDescription>
                 </Alert>
             )}
+
+            <div className="space-y-2">
+                <Label>I am a...</Label>
+                <RadioGroup name="role" defaultValue="student" className="flex gap-4">
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="student" id="role-student" />
+                        <Label htmlFor="role-student">Student</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="mentor" id="role-mentor" />
+                        <Label htmlFor="role-mentor">Mentor</Label>
+                    </div>
+                </RadioGroup>
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                     <Label htmlFor="name">Full Name</Label>
@@ -62,11 +77,11 @@ export function SignupForm() {
                 </div>
             </div>
              <div className="space-y-2">
-                <Label htmlFor="education">Education</Label>
-                <Input id="education" name="education" placeholder="e.g., 12th Grade, B.Tech in CS" />
+                <Label htmlFor="education">Education / Profession</Label>
+                <Input id="education" name="education" placeholder="e.g., B.Tech in CS or Software Engineer @ Google" />
             </div>
              <div className="space-y-2">
-                <Label htmlFor="skills">Skills</Label>
+                <Label htmlFor="skills">Skills / Expertise</Label>
                 <Input id="skills" name="skills" placeholder="e.g., Python, Communication, Public Speaking" />
             </div>
              <div className="space-y-2">
@@ -74,8 +89,8 @@ export function SignupForm() {
                 <Input id="hobbies" name="hobbies" placeholder="e.g., Reading, Cricket, Coding" />
             </div>
              <div className="space-y-2">
-                <Label htmlFor="ambition">Goal or Ambition</Label>
-                <Textarea id="ambition" name="ambition" placeholder="Describe your career goals or what you aspire to become." />
+                <Label htmlFor="ambition">Goal or Ambition / Bio</Label>
+                <Textarea id="ambition" name="ambition" placeholder="Describe your career goals or a short bio about yourself." />
             </div>
             <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>

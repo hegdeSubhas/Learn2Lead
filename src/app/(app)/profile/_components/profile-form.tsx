@@ -51,13 +51,17 @@ export function ProfileForm({ user, profile }: { user: User, profile: any }) {
                     <Label htmlFor="age">Age</Label>
                     <Input id="age" name="age" type="number" defaultValue={profile?.age ?? ''} />
                 </div>
+                 <div className="space-y-2">
+                    <Label htmlFor="role">Role</Label>
+                    <Input id="role" name="role" defaultValue={profile?.role ? profile.role.charAt(0).toUpperCase() + profile.role.slice(1) : ''} disabled />
+                </div>
             </div>
              <div className="space-y-2">
-                <Label htmlFor="education">Education</Label>
-                <Input id="education" name="education" placeholder="e.g., 12th Grade, B.Tech in CS" defaultValue={profile?.education ?? ''} />
+                <Label htmlFor="education">Education / Profession</Label>
+                <Input id="education" name="education" placeholder="e.g., 12th Grade or Software Engineer @ Google" defaultValue={profile?.education ?? ''} />
             </div>
              <div className="space-y-2">
-                <Label htmlFor="skills">Skills</Label>
+                <Label htmlFor="skills">Skills / Expertise</Label>
                 <Input id="skills" name="skills" placeholder="e.g., Python, Communication, Public Speaking" defaultValue={profile?.skills ?? ''} />
             </div>
              <div className="space-y-2">
@@ -65,8 +69,8 @@ export function ProfileForm({ user, profile }: { user: User, profile: any }) {
                 <Input id="hobbies" name="hobbies" placeholder="e.g., Reading, Cricket, Coding" defaultValue={profile?.hobbies ?? ''} />
             </div>
              <div className="space-y-2">
-                <Label htmlFor="ambition">Goal or Ambition</Label>
-                <Textarea id="ambition" name="ambition" placeholder="Describe your career goals or what you aspire to become." defaultValue={profile?.ambition ?? ''}/>
+                <Label htmlFor="ambition">Goal or Ambition / Bio</Label>
+                <Textarea id="ambition" name="ambition" placeholder="Describe your career goals or a short bio." defaultValue={profile?.ambition ?? ''}/>
             </div>
             <SubmitButton />
         </form>
