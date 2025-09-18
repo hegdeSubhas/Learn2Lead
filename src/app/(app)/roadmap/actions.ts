@@ -1,10 +1,11 @@
+
 "use server";
 
 import { generateJobRoadmap } from "@/ai/flows/generate-job-roadmap";
 import { z } from "zod";
 
 const roadmapSchema = z.object({
-  jobRole: z.string().min(3, "Job role must be at least 3 characters long."),
+  jobRole: z.string().min(2, "Job role must be at least 2 characters long."),
   interests: z.string().min(10, "Interests must be at least 10 characters long."),
 });
 
