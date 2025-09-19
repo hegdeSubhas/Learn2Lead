@@ -27,7 +27,7 @@ export async function getStudentRequests(mentorId: string): Promise<{ data: Stud
       id,
       status,
       created_at,
-      student_id:profiles!mentor_requests_student_id_fkey (
+      student_id:profiles (
         id,
         full_name,
         education,
@@ -45,10 +45,13 @@ export async function getStudentRequests(mentorId: string): Promise<{ data: Stud
 
   // The type from Supabase might be slightly different, so we cast it.
   // The select query is structured to return the profile nested under `student_id`.
-  const requests: StudentRequest[] = data.map((item: any) => ({
+  const requests: StudentRequest[] = data.map((item: any) => {
+    const studentProfile = item.student_id;
+    return {
       ...item,
-      student_id: Array.isArray(item.student_id) ? item.student_id[0] : item.student_id,
-  }));
+      student_id: Array.isArray(studentProfile) ? studentProfile[0] : studentProfile,
+    };
+  });
 
 
   return { data: requests, error: null };

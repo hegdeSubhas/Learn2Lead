@@ -47,7 +47,7 @@ export async function getQuizzesForDashboard(studentId: string): Promise<{ data:
             id, 
             title, 
             topic,
-            mentor:profiles!mentor_quizzes_mentor_id_fkey (full_name)
+            mentor:profiles (full_name)
         `)
         .in('mentor_id', mentorIds)
         .order('created_at', { ascending: false })
@@ -58,13 +58,16 @@ export async function getQuizzesForDashboard(studentId: string): Promise<{ data:
         return { data: null, error: "Failed to fetch quizzes." };
     }
 
-    const formattedQuizzes = quizzes.map(q => ({
-        id: q.id,
-        title: q.title,
-        topic: q.topic,
-        // @ts-ignore
-        mentor_name: q.mentor?.full_name || 'N/A'
-    }));
+    const formattedQuizzes = quizzes.map(q => {
+        const mentorProfile = q.mentor;
+        const profile = Array.isArray(mentorProfile) ? mentorProfile[0] : mentorProfile;
+        return {
+            id: q.id,
+            title: q.title,
+            topic: q.topic,
+            mentor_name: profile?.full_name || 'N/A'
+        }
+    });
 
     return { data: formattedQuizzes, error: null };
 }
@@ -84,7 +87,7 @@ export async function getAnnouncementsForDashboard(studentId: string): Promise<{
             id,
             content,
             created_at,
-            mentor:profiles!announcements_mentor_id_fkey (full_name)
+            mentor:profiles (full_name)
         `)
         .in('mentor_id', mentorIds)
         .order('created_at', { ascending: false })
@@ -95,13 +98,16 @@ export async function getAnnouncementsForDashboard(studentId: string): Promise<{
         return { data: null, error: "Failed to fetch announcements." };
     }
 
-    const announcements = data.map(a => ({
-        id: a.id,
-        content: a.content,
-        created_at: a.created_at,
-        // @ts-ignore
-        mentor_name: a.mentor?.full_name || 'N/A'
-    }));
+    const announcements = data.map(a => {
+        const mentorProfile = a.mentor;
+        const profile = Array.isArray(mentorProfile) ? mentorProfile[0] : mentorProfile;
+        return {
+            id: a.id,
+            content: a.content,
+            created_at: a.created_at,
+            mentor_name: profile?.full_name || 'N/A'
+        }
+    });
 
     return { data: announcements, error: null };
 }
