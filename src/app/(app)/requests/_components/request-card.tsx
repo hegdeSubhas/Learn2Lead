@@ -77,7 +77,7 @@ export function RequestCard({ request }: { request: StudentRequest }) {
     }
   }, [state, toast]);
   
-  const student = request.student_id;
+  const student = request.student;
 
   return (
     <Card className="flex flex-col">

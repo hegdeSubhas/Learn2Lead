@@ -14,7 +14,7 @@ export interface StudentRequest {
   id: number;
   status: 'pending' | 'accepted' | 'rejected';
   created_at: string;
-  student_id: StudentProfile; // This will now be an object
+  student: StudentProfile; // This will now be an object
 }
 
 export async function getStudentRequests(mentorId: string): Promise<{ data: StudentRequest[] | null; error: string | null }> {
@@ -27,7 +27,7 @@ export async function getStudentRequests(mentorId: string): Promise<{ data: Stud
       id,
       status,
       created_at,
-      student_id:profiles!inner (
+      student:profiles (
         id,
         full_name,
         education,
@@ -44,16 +44,15 @@ export async function getStudentRequests(mentorId: string): Promise<{ data: Stud
   }
 
   // The type from Supabase might be slightly different, so we cast it.
-  // The select query is structured to return the profile nested under `student_id`.
   const requests: StudentRequest[] = data.map((item: any) => {
-    const studentProfile = item.student_id;
+    const studentProfile = item.student;
     // Defensive check in case profile is null or an array
     const profile = Array.isArray(studentProfile) ? studentProfile[0] : studentProfile;
     return {
       ...item,
-      student_id: profile,
+      student: profile,
     };
-  }).filter(req => req.student_id); // Filter out any requests where the student profile might be missing
+  }).filter(req => req.student); // Filter out any requests where the student profile might be missing
 
 
   return { data: requests, error: null };
