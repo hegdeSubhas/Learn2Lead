@@ -27,7 +27,7 @@ export async function getStudentRequests(mentorId: string): Promise<{ data: Stud
       id,
       status,
       created_at,
-      student_id:profiles (
+      student_id:profiles!inner (
         id,
         full_name,
         education,
@@ -47,11 +47,13 @@ export async function getStudentRequests(mentorId: string): Promise<{ data: Stud
   // The select query is structured to return the profile nested under `student_id`.
   const requests: StudentRequest[] = data.map((item: any) => {
     const studentProfile = item.student_id;
+    // Defensive check in case profile is null or an array
+    const profile = Array.isArray(studentProfile) ? studentProfile[0] : studentProfile;
     return {
       ...item,
-      student_id: Array.isArray(studentProfile) ? studentProfile[0] : studentProfile,
+      student_id: profile,
     };
-  });
+  }).filter(req => req.student_id); // Filter out any requests where the student profile might be missing
 
 
   return { data: requests, error: null };
