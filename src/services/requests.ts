@@ -14,7 +14,7 @@ export interface StudentRequest {
   id: number;
   status: 'pending' | 'accepted' | 'rejected';
   created_at: string;
-  student: StudentProfile; // This will now be an object
+  student: StudentProfile;
 }
 
 export async function getStudentRequests(mentorId: string): Promise<{ data: StudentRequest[] | null; error: string | null }> {
@@ -27,7 +27,7 @@ export async function getStudentRequests(mentorId: string): Promise<{ data: Stud
       id,
       status,
       created_at,
-      student:profiles (
+      student:profiles!student_id (
         id,
         full_name,
         education,
@@ -43,17 +43,21 @@ export async function getStudentRequests(mentorId: string): Promise<{ data: Stud
     return { data: null, error: "Failed to fetch student requests." };
   }
 
-  // The type from Supabase might be slightly different, so we cast it.
-  const requests: StudentRequest[] = data.map((item: any) => {
-    const studentProfile = item.student;
-    // Defensive check in case profile is null or an array
-    const profile = Array.isArray(studentProfile) ? studentProfile[0] : studentProfile;
-    return {
-      ...item,
-      student: profile,
-    };
-  }).filter(req => req.student); // Filter out any requests where the student profile might be missing
-
+  // The type from Supabase might be slightly different, so we cast it and filter out nulls.
+  const requests: StudentRequest[] = (data || [])
+    .map((item: any) => {
+        // Ensure student profile is a valid object before including it
+        if (!item.student || typeof item.student !== 'object') {
+            return null;
+        }
+        return {
+            id: item.id,
+            status: item.status,
+            created_at: item.created_at,
+            student: item.student,
+        };
+    })
+    .filter((req): req is StudentRequest => req !== null); // Type guard to filter out nulls
 
   return { data: requests, error: null };
 }
