@@ -56,7 +56,7 @@ export async function getStudentRequests(mentorId: string): Promise<{ data: Stud
             id: item.id,
             status: item.status,
             created_at: item.created_at,
-            student: item.student,
+            student: item.student as StudentProfile,
         };
     })
     .filter((req): req is StudentRequest => req !== null); // Type guard to filter out nulls

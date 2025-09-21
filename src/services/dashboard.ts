@@ -17,6 +17,8 @@ export interface DashboardAnnouncement {
   mentor_name: string | null;
 }
 
+type Profile = { full_name: string | null };
+
 async function getConnectedMentorIds(supabase: SupabaseClient, studentId: string): Promise<string[]> {
     const { data: requests, error } = await supabase
         .from('mentor_requests')
@@ -59,7 +61,7 @@ export async function getQuizzesForDashboard(studentId: string): Promise<{ data:
     }
 
     const formattedQuizzes = quizzes.map(q => {
-        const mentorProfile = q.mentor;
+        const mentorProfile = q.mentor as Profile | Profile[] | null;
         const profile = Array.isArray(mentorProfile) ? mentorProfile[0] : mentorProfile;
         return {
             id: q.id,
@@ -99,13 +101,13 @@ export async function getAnnouncementsForDashboard(studentId: string): Promise<{
     }
 
     const announcements = data.map(a => {
-        const mentorProfile = a.mentor;
+        const mentorProfile = a.mentor as Profile | Profile[] | null;
         const profile = Array.isArray(mentorProfile) ? mentorProfile[0] : mentorProfile;
         return {
             id: a.id,
             content: a.content,
             created_at: a.created_at,
-            mentor_name: profile?.full_name || 'N/A'
+            mentor_name: profile?.full_name || 'N'
         }
     });
 

@@ -36,6 +36,8 @@ export interface QuizSubmission {
     student_name: string | null;
 }
 
+type Profile = { full_name: string | null };
+
 export async function getQuizSubmissions(quizId: number, mentorId: string): Promise<{ data: QuizSubmission[] | null; error: string | null; quizTitle: string | null }> {
     const cookieStore = cookies();
     const supabase = createClient(cookieStore);
@@ -72,9 +74,7 @@ export async function getQuizSubmissions(quizId: number, mentorId: string): Prom
     }
 
     const submissions = data.map(s => {
-        // The student profile can be null or an array depending on the relationship.
-        // This defensive code handles both cases.
-        const studentProfile = s.student;
+        const studentProfile = s.student as Profile | Profile[] | null;
         const profile = Array.isArray(studentProfile) ? studentProfile[0] : studentProfile;
         return {
             id: s.id,
