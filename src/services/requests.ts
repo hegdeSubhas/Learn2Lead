@@ -1,8 +1,8 @@
 
-"use server";
+'use server';
 
-import { createClient } from "@/lib/supabase/server";
-import { cookies } from "next/headers";
+import { createClient } from '@/lib/supabase/server';
+import { cookies } from 'next/headers';
 
 interface StudentProfile {
   id: string;
@@ -19,13 +19,16 @@ export interface StudentRequest {
   student: StudentProfile;
 }
 
-export async function getStudentRequests(mentorId: string): Promise<{ data: StudentRequest[] | null; error: string | null }> {
+export async function getStudentRequests(
+  mentorId: string
+): Promise<{ data: StudentRequest[] | null; error: string | null }> {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
-  
+
   const { data, error } = await supabase
     .from('mentor_requests')
-    .select(`
+    .select(
+      `
       id,
       status,
       created_at,
@@ -36,30 +39,29 @@ export async function getStudentRequests(mentorId: string): Promise<{ data: Stud
         skills,
         ambition
       )
-    `)
+    `
+    )
     .eq('mentor_id', mentorId)
     .order('created_at', { ascending: false });
 
   if (error) {
-    console.error("Error fetching student requests:", error);
-    return { data: null, error: "Failed to fetch student requests." };
+    console.error('Error fetching student requests:', error);
+    return { data: null, error: 'Failed to fetch student requests.' };
   }
 
-  // The type from Supabase might be slightly different, so we cast it and filter out nulls.
   const requests: StudentRequest[] = (data || [])
     .map((item: any) => {
-        // Ensure student profile is a valid object before including it
-        if (!item.student || typeof item.student !== 'object') {
-            return null;
-        }
-        return {
-            id: item.id,
-            status: item.status,
-            created_at: item.created_at,
-            student: item.student as StudentProfile,
-        };
+      if (!item.student || typeof item.student !== 'object') {
+        return null;
+      }
+      return {
+        id: item.id,
+        status: item.status,
+        created_at: item.created_at,
+        student: item.student as StudentProfile,
+      };
     })
-    .filter((req): req is StudentRequest => req !== null); // Type guard to filter out nulls
+    .filter((req): req is StudentRequest => req !== null);
 
   return { data: requests, error: null };
 }
