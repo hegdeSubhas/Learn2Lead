@@ -1,4 +1,6 @@
 
+"use server";
+
 import { createClient } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
 
@@ -27,7 +29,7 @@ export async function getStudentRequests(mentorId: string): Promise<{ data: Stud
       id,
       status,
       created_at,
-      student:profiles!student_id (
+      student:profiles!mentor_requests_student_id_fkey (
         id,
         full_name,
         education,
